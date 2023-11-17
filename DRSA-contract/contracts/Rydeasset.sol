@@ -144,6 +144,19 @@ contract RydeAsset is ERC1155, Ownable {
         }
     }
 
+    function transferBatch(address from, address[] memory to, uint256[] memory tokenId) public {
+        require(to.length == tokenId.length, "Array length mismatch");
+
+        uint256[] memory amounts = new uint256[](to.length);
+        for (uint256 i = 0; i < to.length; i++) {
+            amounts[i] = 1; // You can customize the amounts if needed
+        
+        safeBatchTransferFrom(from, to[i], tokenId, amounts, "");
+        }
+
+        //safeBatchTransferFrom(from, to, tokenId, amounts, "");
+    }
+
     
 
     function transferBatchXclusiveRydePass(address from, address[] memory to, uint256[] memory tokenId) public {

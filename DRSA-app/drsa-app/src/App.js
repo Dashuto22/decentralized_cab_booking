@@ -37,6 +37,7 @@ const MapScreen = () => {
     const loadAccount = async () => {
       if (web3) {
         const accounts = await web3.eth.getAccounts();
+        console.log("Acc: ", accounts)
         setAccount(accounts[0]);
       }
     };
@@ -68,6 +69,7 @@ const MapScreen = () => {
         //const xrtPassBalance = await getXclusiveRydePassCount(web3, account);
 
         // Update the state with the retrieved balances
+        console.log(rideKoinBalance)
         setRideKoins(rideKoinBalance);
         //setXrtPass(xrtPassBalance);
       }
@@ -82,12 +84,19 @@ const MapScreen = () => {
 
   const getRideKoinBalance = async (web3, account) => {
     // Replace with your contract ABI and address
-    const contractAddress =  "0xd9145CCE52D386f254917e481eB44e9943F39138"/* The address of your deployed RydeAsset contract */;
+    const contractAddress =  "0x20E1291A9a9ED97EBF5E3f3F2a98dEe1A181455f"/* The address of your deployed RydeAsset contract */;
     const rydekoinContract = new web3.eth.Contract(contractAbi, contractAddress);
 
     try {
       // Call the getRideKoinBalance function
-      const balance = await rydekoinContract.methods.balanceOf(account).call();
+      console.log("heehaaa",rydekoinContract.methods);
+      const send = await rydekoinContract.methods.whoami().call();
+
+      const balance = await rydekoinContract.methods.balanceOf(send).call();
+
+      console.log("whoami : ", send)
+
+      console.log("account address: ", account)
       return balance;
     } catch (error) {
       console.error('Error getting RideKoin balance:', error);
