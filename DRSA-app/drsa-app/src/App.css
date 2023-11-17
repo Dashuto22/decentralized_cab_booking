@@ -1,3 +1,20 @@
+@import url('https://fonts.googleapis.com/css2?family=Lato&display=swap');
+
+*{
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+  font-family: 'Lato', sans-serif;
+}
+
+.home, .reports, .prodcuts {
+  display: flex;
+  height: 90vh;
+  align-items: center;
+  justify-content: center;
+  font-size: 3rem;
+}
+
 .App {
   text-align: center;
 }
@@ -138,11 +155,13 @@
 
 
 .sidebarToggle {
-  background: none; /* No background for a cleaner look */
+  background-color: black; /* No background for a cleaner look */
   border: none;
   color: white; /* Adjust color to match your design */
   font-size: 1.5em; /* Adjust size as needed */
   cursor: pointer;
+  width: 6%;
+  margin-left: 92%;
 }
 
 /* Keep the rest of the CSS for the sidebar and profile as previously defined */
