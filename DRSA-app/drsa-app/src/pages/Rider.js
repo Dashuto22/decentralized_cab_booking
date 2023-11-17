@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
-import contractAbi from './rydekoin.json';
-import './App.css';
+import contractAbi from '../rydekoin.json';
+import '../App.css';
 
 
 
