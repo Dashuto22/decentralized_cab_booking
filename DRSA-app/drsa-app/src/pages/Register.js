@@ -36,7 +36,7 @@ function Register() {
 
   const handleRegistration = async (registrationFunction) => {
     if (web3 && account) {
-      const contractAddress = '0x326525609782e20697bB91D4b52f124bD7cf4988';
+      const contractAddress = '0x98eA6F30bd1819920F2FE8aB42EfE233e33f9741';
       const rydeContract = new web3.eth.Contract(contractAbi, contractAddress);
 
       try {

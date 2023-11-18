@@ -1,35 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import Web3 from 'web3';
+import { initializeWeb3 } from '../utils/web3'; // Adjust the path based on your actual folder structure
 import contractAbi from '../rydekoin.json';
 import '../App.css';
-
-
-
 
 const RiderScreen = () => {
   const [web3, setWeb3] = useState(null);
   const [account, setAccount] = useState('');
-  const [network, setNetwork] = useState(''); 
+  const [network, setNetwork] = useState('');
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [rideKoins, setRideKoins] = useState(0); // Initialize with default value
-  const [xrtPass, setXrtPass] = useState(0);
 
   useEffect(() => {
-
     const loadWeb3 = async () => {
-      if (window.ethereum) {
-        const web3Instance = new Web3(window.ethereum);
-        try {
-          await window.ethereum.enable();
-          setWeb3(web3Instance);
-        } catch (error) {
-          console.error('User denied account access');
-        }
-      } else if (window.web3) {
-        const web3Instance = new Web3(window.web3.currentProvider);
+      try {
+        const web3Instance = await initializeWeb3();
         setWeb3(web3Instance);
-      } else {
-        console.error('No Ethereum browser extension detected');
+      } catch (error) {
+        console.error('Error initializing web3:', error);
       }
     };
 
@@ -40,7 +27,7 @@ const RiderScreen = () => {
     const loadAccount = async () => {
       if (web3) {
         const accounts = await web3.eth.getAccounts();
-        console.log("Acc: ", accounts)
+        console.log("Acc: ", accounts);
         setAccount(accounts[0]);
       }
     };
@@ -63,18 +50,15 @@ const RiderScreen = () => {
     loadNetwork();
   }, [web3, account]);
 
-
   useEffect(() => {
     const loadBalances = async () => {
       if (web3 && account) {
-        //Call the smart contract functions to get balances
-        const rideKoinBalance = await getRideKoinBalance(web3,account);
-        //const xrtPassBalance = await getXclusiveRydePassCount(web3, account);
+        // Call the smart contract functions to get balances
+        const rideKoinBalance = await getRideKoinBalance(web3, account);
 
-        //Update the state with the retrieved balances
-        console.log(rideKoinBalance)
+        // Update the state with the retrieved balances
+        console.log(rideKoinBalance);
         setRideKoins(rideKoinBalance);
-        //setXrtPass(xrtPassBalance);
       }
     };
 
@@ -85,32 +69,24 @@ const RiderScreen = () => {
     setSidebarOpen(!sidebarOpen);
   };
 
-
   const getRideKoinBalance = async (web3, account) => {
-    // Replace with your contract ABI and address
-    const contractAddress =  "0x326525609782e20697bB91D4b52f124bD7cf4988"/* The address of your deployed RydeAsset contract */;
+    const contractAddress = '0x98eA6F30bd1819920F2FE8aB42EfE233e33f9741';
     const rydekoinContract = new web3.eth.Contract(contractAbi, contractAddress);
 
     try {
-      // Call the getRideKoinBalance function
-      //console.log("heehaaa",rydekoinContract.methods);
-      //const send = await rydekoinContract.methods.whoami().call({from : account});
-      //console.log("whoami : ", send)
-
-      const balance = await rydekoinContract.methods.getRideKoinBalance(account).send({from : account});
-
-      console.log("account address: ", account)
+      const balance = await rydekoinContract.methods.getRideKoinBalance(account).call({ from: account });
+      console.log("account address: ", account);
       return balance;
     } catch (error) {
       console.error('Error getting RideKoin balance:', error);
       return 0; // Return a default value in case of an error
     }
   };
+
   return (
     <div style={{ display: 'flex', height: '100vh' }}>
-      
       <div className="mapScreen" style={{ backgroundImage: `url("/assets/GoogleMapTA.webp")`, flex: 1 }}>
-        <button className="sidebarToggle" onClick={() => setSidebarOpen(!sidebarOpen)}>
+        <button className="sidebarToggle" onClick={() => toggleSidebar()}>
           {/* Icon for the button */}
         </button>
         <div className="locationInputs">
