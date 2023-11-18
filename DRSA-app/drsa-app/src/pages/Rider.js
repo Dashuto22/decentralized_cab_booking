@@ -67,11 +67,11 @@ const RiderScreen = () => {
   useEffect(() => {
     const loadBalances = async () => {
       if (web3 && account) {
-        // Call the smart contract functions to get balances
+        //Call the smart contract functions to get balances
         const rideKoinBalance = await getRideKoinBalance(web3,account);
         //const xrtPassBalance = await getXclusiveRydePassCount(web3, account);
 
-        // Update the state with the retrieved balances
+        //Update the state with the retrieved balances
         console.log(rideKoinBalance)
         setRideKoins(rideKoinBalance);
         //setXrtPass(xrtPassBalance);
@@ -88,17 +88,16 @@ const RiderScreen = () => {
 
   const getRideKoinBalance = async (web3, account) => {
     // Replace with your contract ABI and address
-    const contractAddress =  "0x20E1291A9a9ED97EBF5E3f3F2a98dEe1A181455f"/* The address of your deployed RydeAsset contract */;
+    const contractAddress =  "0x20f7e4F93fd621b7Cc58aDBC3b2b85A59f1C1b99"/* The address of your deployed RydeAsset contract */;
     const rydekoinContract = new web3.eth.Contract(contractAbi, contractAddress);
 
     try {
       // Call the getRideKoinBalance function
-      console.log("heehaaa",rydekoinContract.methods);
-      const send = await rydekoinContract.methods.whoami().call();
+      //console.log("heehaaa",rydekoinContract.methods);
+      //const send = await rydekoinContract.methods.whoami().call({from : account});
+      //console.log("whoami : ", send)
 
-      const balance = await rydekoinContract.methods.balanceOf(send).call();
-
-      console.log("whoami : ", send)
+      const balance = await rydekoinContract.methods.getRideKoinBalance(account).call({from : account});
 
       console.log("account address: ", account)
       return balance;
