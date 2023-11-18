@@ -1,8 +1,12 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { initializeWeb3 } from '../utils/web3';
+import contractAbi from '../Rydeasset.json';
+
 import './AssetManagement.css'; // Import the CSS file
 
 function AssetManagement() {
     // State for each input and the receiver's address
+    const [web3, setWeb3] = useState(null);
     const [buyRideKoin, setBuyRideKoin] = useState('');
     const [buyXRTPasses, setBuyXRTPasses] = useState('');
     const [createRideAsset, setCreateRideAsset] = useState('');
@@ -11,9 +15,41 @@ function AssetManagement() {
     const [sendRideAsset, setSendRideAsset] = useState('');
     const [receiverAddress, setReceiverAddress] = useState('');
 
+
+    useEffect(() => {
+        const loadWeb3 = async () => {
+          try {
+            const web3Instance = await initializeWeb3();
+            setWeb3(web3Instance);
+          } catch (error) {
+            console.error('Error initializing web3:', error);
+          }
+        };
+    
+        loadWeb3();
+      }, []);
+
     // Handlers for each button click
     // Add your logic here
-    const handleBuyRideKoin = () => { /* logic */ };
+
+    const handleBuyRideKoin = async () => {
+        if (web3) {
+          const contractAddress = '0x326525609782e20697bB91D4b52f124bD7cf4988';
+          const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
+    
+          try {
+            // Convert input value to a BigNumber if necessary
+            const tokenAmount = web3.utils.toBN(buyRideKoin);
+    
+            // Call the smart contract function
+            await contractInstance.methods.buyRideKoin(tokenAmount).send({ from: 'SENDER_ADDRESS', value: web3.utils.toWei('AMOUNT_IN_ETHER', 'ether') });
+            
+            console.log('Transaction successful for buyRideKoin');
+          } catch (error) {
+            console.error('Error in buyRideKoin transaction:', error);
+          }
+        }
+      };
     const handleBuyXRTPasses = () => { /* logic */ };
     const handleCreateRideAsset = () => { /* logic */ };
     const handleSendRideKoin = () => { /* logic */ };
