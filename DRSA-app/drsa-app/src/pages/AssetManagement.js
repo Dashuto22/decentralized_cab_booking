@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { initializeWeb3 } from '../utils/web3';
 import contractAbi from '../Rydeasset.json';
 
@@ -6,14 +6,18 @@ import './AssetManagement.css'; // Import the CSS file
 
 function AssetManagement() {
     // State for each input and the receiver's address
+    
+
     const [web3, setWeb3] = useState(null);
+    const [account, setAccount] = useState('');
     const [buyRideKoin, setBuyRideKoin] = useState('');
-    const [buyXRTPasses, setBuyXRTPasses] = useState('');
+    const [viewXRTPasses, setviewXRTPasses] = useState('');
     const [createRideAsset, setCreateRideAsset] = useState('');
     const [sendRideKoin, setSendRideKoin] = useState('');
     const [sendXRTPasses, setSendXRTPasses] = useState('');
     const [sendRideAsset, setSendRideAsset] = useState('');
     const [receiverAddress, setReceiverAddress] = useState('');
+    const [contractInstance, setContractInstance] = useState(null);
 
 
     useEffect(() => {
@@ -29,28 +33,55 @@ function AssetManagement() {
         loadWeb3();
       }, []);
 
+      useEffect(() => {
+        const loadAccount = async () => {
+          if (web3) {
+            const accounts = await web3.eth.getAccounts();
+            setAccount(accounts[0]);
+          }
+        };
+    
+        loadAccount();
+      }, [web3]);
+
     // Handlers for each button click
     // Add your logic here
 
     const handleBuyRideKoin = async () => {
-        if (web3) {
-          const contractAddress = '0x326525609782e20697bB91D4b52f124bD7cf4988';
-          const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
-    
-          try {
+        try {
+            const contractAddress = '0x326525609782e20697bB91D4b52f124bD7cf4988';
+            const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
+            setContractInstance(contractInstance);
+
+
             // Convert input value to a BigNumber if necessary
-            const tokenAmount = web3.utils.toBN(buyRideKoin);
-    
+            const tokenAmount = buyRideKoin;
+            const tokenAmountInWei = tokenAmount * 10;
+
             // Call the smart contract function
-            await contractInstance.methods.buyRideKoin(tokenAmount).send({ from: 'SENDER_ADDRESS', value: web3.utils.toWei('AMOUNT_IN_ETHER', 'ether') });
-            
+            await contractInstance.methods.buyRideKoin(tokenAmount).send({ from: account, value: tokenAmountInWei });
+
             console.log('Transaction successful for buyRideKoin');
-          } catch (error) {
+        } catch (error) {
             console.error('Error in buyRideKoin transaction:', error);
-          }
         }
-      };
-    const handleBuyXRTPasses = () => { /* logic */ };
+    };
+
+    const handleViewXRTPasses = async () => {
+        try {
+            if (contractInstance) {
+                // Call the smart contract function
+                const tokens = await contractInstance.methods.getTokens(account).call({ from: account });
+                console.log('Tokens owned:', tokens);
+                setviewXRTPasses(tokens);
+            } else {
+                console.error('Contract instance not available');
+            }
+        } catch (error) {
+            console.error('Error in getTokens call:', error);
+        }
+    };
+    
     const handleCreateRideAsset = () => { /* logic */ };
     const handleSendRideKoin = () => { /* logic */ };
     const handleSendXRTPasses = () => { /* logic */ };
@@ -66,8 +97,8 @@ function AssetManagement() {
             </div>
             <div className="card">
                 <div className="row">
-                    <input type="text" value={buyXRTPasses} onChange={(e) => setBuyXRTPasses(e.target.value)} placeholder="Buy XRT Passes" />
-                    <button onClick={handleBuyXRTPasses}>Buy</button>
+                    <input type="text" value={viewXRTPasses} onChange={(e) => setviewXRTPasses(e.target.value)} placeholder="View XRT Passes" />
+                    <button onClick={handleViewXRTPasses }>View</button>
                 </div>
             </div>
             <div className="card">
