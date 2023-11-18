@@ -3,10 +3,13 @@ import { initializeWeb3 } from '../utils/web3';
 import contractAbi from '../Rydeasset.json';
 
 import './AssetManagement.css'; // Import the CSS file
+import { useRideKoin } from './RideKoinContext';
+
 
 function AssetManagement() {
     // State for each input and the receiver's address
-    
+    const { setRideKoins } = useRideKoin();
+
 
     const [web3, setWeb3] = useState(null);
     const [account, setAccount] = useState('');
@@ -49,7 +52,7 @@ function AssetManagement() {
 
     const handleBuyRideKoin = async () => {
         try {
-            const contractAddress = '0x326525609782e20697bB91D4b52f124bD7cf4988';
+            const contractAddress = '0xb1692d63D4BB8E780295f96bEdfD5ee54f929B66';
             const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
             setContractInstance(contractInstance);
 
@@ -62,6 +65,8 @@ function AssetManagement() {
             await contractInstance.methods.buyRideKoin(tokenAmount).send({ from: account, value: tokenAmountInWei });
 
             console.log('Transaction successful for buyRideKoin');
+            setRideKoins(previousKoins => previousKoins + parseInt(tokenAmount));
+
         } catch (error) {
             console.error('Error in buyRideKoin transaction:', error);
         }

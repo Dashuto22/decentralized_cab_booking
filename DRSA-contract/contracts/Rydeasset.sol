@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.21;
+pragma solidity ^0.8.20;
 
 
 
@@ -20,6 +20,16 @@ contract RydeAsset is ERC1155, Ownable {
     enum UserRole { None, Driver, Rider }
     mapping(address => UserRole) public userRoles;
 
+    struct RideRequest {
+        address rider;
+        string fromLocation;
+        string toLocation;
+    }
+
+    uint256 private currentRequestId = 0;
+    mapping(uint256 => RideRequest) public rideRequests;
+
+
     constructor(address _rideKoinContractAddress, address _xclusiveRydePassContractAddress) 
         ERC1155("abcdce") 
             Ownable(msg.sender)  
@@ -27,6 +37,8 @@ contract RydeAsset is ERC1155, Ownable {
         rideKoinContract = RideKoin(_rideKoinContractAddress);
         xclusiveRydePassContract = XclusiveRydePass(_xclusiveRydePassContractAddress);
     }
+
+    event RideRequested(uint256 requestId, address rider, string fromLocation, string toLocation);
 
     function registerAsDriver() public {
         userRoles[msg.sender] = UserRole.Driver;
@@ -172,5 +184,24 @@ contract RydeAsset is ERC1155, Ownable {
         }
 
 
-}
+    }
+
+    function createRideRequest(string memory fromLocation, string memory toLocation) public {
+        require(userRoles[msg.sender] == UserRole.Rider, "Only riders can create requests");
+        rideRequests[currentRequestId] = RideRequest({
+            rider: msg.sender,
+            fromLocation: fromLocation,
+            toLocation: toLocation
+        });
+        emit RideRequested(currentRequestId, msg.sender, fromLocation, toLocation);
+        currentRequestId++;
+    }
+
+    function viewRideRequests() public view returns (RideRequest[] memory) {
+        RideRequest[] memory requests = new RideRequest[](currentRequestId);
+        for (uint i = 0; i < currentRequestId; i++) {
+            requests[i] = rideRequests[i];
+        }
+        return requests;
+    }
 }

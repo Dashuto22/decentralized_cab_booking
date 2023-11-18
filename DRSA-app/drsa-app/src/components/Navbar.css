@@ -72,3 +72,38 @@
 span {
     margin-left: 16px;
 }
+
+
+.profile-card {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background-color: #f3f3f3; /* Adjust the background color as needed */
+    border-bottom: 1px solid #ddd; /* Optional */
+}
+
+.profile-photo {
+    width: 50px; /* Adjust as needed */
+    height: 50px; /* Adjust as needed */
+    border-radius: 50%;
+    margin-right: 15px;
+}
+
+.info-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-box div {
+    margin-bottom: 5px; /* Space between the info */
+}
+
+.user-name {
+    color: #fff; /* Make sure this color stands out against your navbar's background */
+    padding: 10px 20px; /* Add some padding */
+    text-align: center; /* Center the text */
+    font-size: 20px; /* Increase font size for visibility */
+    background-color: #2a2a2a; /* A background color that contrasts with the text */
+    margin-top: 10px; /* Add some margin at the top */
+    z-index: 10; /* Make sure it's not overlapped by other elements */
+}
