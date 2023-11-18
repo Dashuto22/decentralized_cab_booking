@@ -48,7 +48,7 @@ function Register() {
   const handleRiderRegister = async () => {
     if (web3 && account) {
 
-      const contractAddress = '0x20f7e4F93fd621b7Cc58aDBC3b2b85A59f1C1b99';
+      const contractAddress = '0x326525609782e20697bB91D4b52f124bD7cf4988';
 
       const rydeContract = new web3.eth.Contract(contractAbi, contractAddress);
       
@@ -56,10 +56,10 @@ function Register() {
       try {
 
         //console.log("methods here", rydeContract.methods);
-        await rydeContract.methods.registerAsRider().call({ from: account });
+        await rydeContract.methods.registerAsRider().send({ from: account });
         console.log('Registered as Rider');
         console.log("account is", account);
-        const role = await rydeContract.methods.getUserRole().call({from: account });
+        const role = await rydeContract.methods.getUserRole(account).call({ from: account });
         console.log("role is: ", role);
         navigate('/rider'); // Redirect to rider page
       } catch (error) {
@@ -72,16 +72,16 @@ function Register() {
   const handleDriverRegister = async () => {
     if (web3 && account) {
 
-      const contractAddress = '0x20f7e4F93fd621b7Cc58aDBC3b2b85A59f1C1b99';
+      const contractAddress = '0x326525609782e20697bB91D4b52f124bD7cf4988';
 
       const rydeContract = new web3.eth.Contract(contractAbi, contractAddress);
       
 
       try {
-        await rydeContract.methods.registerAsDriver().call({ from: account });
+        await rydeContract.methods.registerAsDriver().send({ from: account });
         console.log('account is: ', account);
         console.log('Registered as Driver');
-        const role = await rydeContract.methods.getUserRole(account).call({from: account});
+        const role = await rydeContract.methods.getUserRole(account).call({ from: account});
         console.log("role is: ", role);
         //navigate('/driver'); // Redirect to driver page
       } catch (error) {
