@@ -36,6 +36,10 @@ contract RydeAsset is ERC1155, Ownable {
         userRoles[msg.sender] = UserRole.Rider;
     }
 
+    function getUserRole(address a) public view returns (UserRole){
+        return userRoles[a];
+    }
+
     function mintXclusiveRydePass(address to) public payable {
         xclusiveRydePassContract.safeMint{value: msg.value}(to);
     }
