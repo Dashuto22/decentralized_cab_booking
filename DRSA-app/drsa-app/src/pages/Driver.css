@@ -1,0 +1,50 @@
+.rider-detail {
+    display: flex;
+    align-items: center;
+    margin-bottom: 20px;
+    background: #fff;
+    padding: 10px;
+    border-radius: 5px;
+}
+
+.rider-profile {
+    margin-right: 20px;
+}
+
+.profile-photo {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    object-fit: cover;
+}
+
+.rider-info {
+    flex-grow: 1;
+}
+
+.rider-stars {
+    display: flex;
+}
+
+.fare-input {
+    margin: 10px 0;
+}
+
+.accept-button {
+    background-color: #4caf50;
+    color: white;
+    border: none;
+    padding: 10px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+.spinner {
+    animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+    100% {
+        transform: rotate(360deg);
+    }
+}

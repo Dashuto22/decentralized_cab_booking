@@ -1,0 +1,13 @@
+{
+  "dependencies": {
+    "@coreui/coreui": "^5.0.0-rc.0",
+    "@coreui/react": "^5.0.0-rc.0",
+    "@emotion/react": "^11.11.1",
+    "@emotion/styled": "^11.11.0",
+    "@mui/icons-material": "^5.14.18",
+    "@mui/material": "^5.14.18",
+    "@openzeppelin/contracts": "^3.4.2",
+    "bootstrap": "^5.3.2",
+    "react-modal": "^3.16.1"
+  }
+}
