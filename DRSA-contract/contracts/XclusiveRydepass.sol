@@ -37,6 +37,20 @@ contract XclusiveRydePass is ERC721, ERC721Enumerable, ERC721Pausable, Ownable, 
         return ownerOf(tokenId);
     }
 
+    function transferToken(address to, address from, uint256 tokenId) public onlyOwnerOf(tokenId) {
+        _transfer(from, to, tokenId);
+        uint256[] storage ownerTokenIds = tokenOwnerstoIds[from];
+        for (uint256 i = 0; i < ownerTokenIds.length; i++) {
+            if (ownerTokenIds[i] == tokenId) {
+                // Remove the transferred token from the owner's list of tokens
+                ownerTokenIds[i] = ownerTokenIds[ownerTokenIds.length - 1];
+                ownerTokenIds.pop();
+                break;
+            }
+        }
+        tokenOwnerstoIds[to].push(tokenId);
+    }
+
     function safeMint(address to) public payable   {
         require(totalSupply() < MAX_SUPPLY, "exceeded max supply, cant mint anymore");
         require(msg.value>=MINT_PRICE, "not enough ethers");

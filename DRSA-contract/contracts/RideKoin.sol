@@ -68,6 +68,11 @@ contract RideKoin is ERC20, Ownable {
     function approveAddress(address spender, uint256 amount) public payable  onlyOwner {
         _approve(msg.sender, spender, amount);
     }
+    
+    function transferRidekoins(address from, address to, uint256 val) public {
+       
+
+    _transfer(from, to, val);}
 
 }
 

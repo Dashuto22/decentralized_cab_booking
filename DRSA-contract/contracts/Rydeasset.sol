@@ -56,6 +56,14 @@ contract RydeAsset is ERC1155, Ownable {
         xclusiveRydePassContract.safeMint{value: msg.value}(to);
     }
 
+
+    function transferRideKoins(address from, address to, uint256 value) public {
+    require(value > 0, "Value must be greater than 0");
+    require(rideKoinContract._balanceOf(from) >= value, "Insufficient RideKoin balance");
+    rideKoinContract.transferRidekoins(from, to, value);
+    
+}
+
     function transferXclusiveRydePass(address from, address to, uint256 tokenId) public {
         xclusiveRydePassContract.transferFrom(from, to, tokenId);
     }
