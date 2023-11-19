@@ -76,7 +76,7 @@ function AssetManagement() {
     };
 
     const handleViewXRTPasses = async () => {
-        const contractAddress = '0x489794436375AE5D6FCcc6EfcB9c84744881437C';
+        const contractAddress = config.rydeAssetContractAddress;;
         const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
         setContractInstance(contractInstance);
         try {
@@ -97,7 +97,7 @@ function AssetManagement() {
 
 
     const handleSendRideKoin = async () => {
-        const contractAddress = '0x489794436375AE5D6FCcc6EfcB9c84744881437C';
+        const contractAddress = config.rydeAssetContractAddress;;
         const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
         setContractInstance(contractInstance);
         try {
@@ -118,7 +118,7 @@ function AssetManagement() {
     };
 
     const handleSendXRTPasses = async () => {
-        const contractAddress = '0x2579a54D8503e01bb2d7d7d0288d689583A09aBf';
+        const contractAddress = config.xrtPassContract;
         const contractInstance = new web3.eth.Contract(rydepassAbi, contractAddress);
         setContractInstance(contractInstance);
         try {

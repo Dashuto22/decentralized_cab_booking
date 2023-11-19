@@ -226,7 +226,7 @@ contract RydeAsset is ERC1155, Ownable {
         require(rideKoinContract._balanceOf(msg.sender) >= acceptedRides[acceptRequestId].fare, "Insufficient RideKoins");
 
         // Transfer RideKoins from rider to contract
-        rideKoinContract.transferFrom(msg.sender, address(this), acceptedRides[acceptRequestId].fare);
+        rideKoinContract.transferRidekoins(msg.sender, acceptedRides[acceptRequestId].driver, acceptedRides[acceptRequestId].fare);
 
         // Add the ride to the confirmed list for the driver
         confirmedRides[acceptedRides[acceptRequestId].driver].push(ConfirmedRide({
