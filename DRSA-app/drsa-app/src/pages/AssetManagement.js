@@ -1,6 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { initializeWeb3 } from '../utils/web3';
 import contractAbi from '../Rydeasset.json';
+import rydepassAbi from '../XclusiveRydepass.json';
 
 import './AssetManagement.css'; // Import the CSS file
 import { useRideKoin } from './RideKoinContext';
@@ -15,6 +16,7 @@ function AssetManagement() {
     const [account, setAccount] = useState('');
     const [buyRideKoin, setBuyRideKoin] = useState('');
     const [viewXRTPasses, setviewXRTPasses] = useState('');
+    const [XRTPassid, setXRTPassid] = useState('');
     const [createRideAsset, setCreateRideAsset] = useState('');
     const [sendRideKoin, setSendRideKoin] = useState('');
     const [sendXRTPasses, setSendXRTPasses] = useState('');
@@ -52,7 +54,10 @@ function AssetManagement() {
 
     const handleBuyRideKoin = async () => {
         try {
-            const contractAddress = '0xb1692d63D4BB8E780295f96bEdfD5ee54f929B66';
+
+
+            const contractAddress = '0x98eA6F30bd1819920F2FE8aB42EfE233e33f9741';
+
             const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
             setContractInstance(contractInstance);
 
@@ -73,6 +78,9 @@ function AssetManagement() {
     };
 
     const handleViewXRTPasses = async () => {
+        const contractAddress = '0x98eA6F30bd1819920F2FE8aB42EfE233e33f9741';
+        const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
+        setContractInstance(contractInstance);
         try {
             if (contractInstance) {
                 // Call the smart contract function
@@ -89,7 +97,32 @@ function AssetManagement() {
     
     const handleCreateRideAsset = () => { /* logic */ };
     const handleSendRideKoin = () => { /* logic */ };
-    const handleSendXRTPasses = () => { /* logic */ };
+
+    const handleSendXRTPasses = async () => {
+        const contractAddress = '0xda10351E712b82edbb6a9f8c86932c802413E2a8';
+        const contractInstance = new web3.eth.Contract(rydepassAbi, contractAddress);
+        setContractInstance(contractInstance);
+        try {
+            if (contractInstance) {
+                // Convert input values to appropriate types
+                console.log("XRTPassid", XRTPassid)
+                const passId = XRTPassid;
+                //const passId = parseInt(XRTPassid, 10); // assuming passId is an integer
+                const receiver = receiverAddress;
+                console.log("receiver ", receiver)
+    
+                // Call the smart contract function
+                await contractInstance.methods.transferToken(receiver,account, passId).send({ from: account });
+    
+                console.log(`Transaction successful for transferring Xclusive Ryde Pass with ID ${passId} to ${receiver}`);
+            } else {
+                console.error('Contract instance not available');
+            }
+        } catch (error) {
+            console.error('Error in transferXclusiveRydePass call:', error);
+        }
+    };
+    
     const handleSendRideAsset = () => { /* logic */ };
 
     return (
@@ -121,7 +154,7 @@ function AssetManagement() {
             </div>
             <div className="card">
                 <div className="row">
-                    <input type="text" value={sendXRTPasses} onChange={(e) => setSendXRTPasses(e.target.value)} placeholder="Send XRT Passes" />
+                    <input type="text" value={XRTPassid} onChange={(e) => setXRTPassid(e.target.value)} placeholder="Enter XRT PassID" />
                     <input type="text" value={receiverAddress} onChange={(e) => setReceiverAddress(e.target.value)} placeholder="Receiver's Address" />
                     <button onClick={handleSendXRTPasses}>Send</button>
                 </div>

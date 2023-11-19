@@ -1,10 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import Web3 from 'web3';
-import RydeAsset from 'contractsAbi/Rydeasset.json';
+
+import { initializeWeb3 } from '../utils/web3'; // Adjust the path based on your actual folder structure
+import RydeAsset from '../Rydeasset.json';
+
 import '../App.css';
-
-
-
 
 const RiderScreen = () => {
   const [web3, setWeb3] = useState(null);
@@ -15,21 +14,12 @@ const RiderScreen = () => {
   const [toLocation, setToLocation] = useState('');
 
   useEffect(() => {
-
     const loadWeb3 = async () => {
-      if (window.ethereum) {
-        const web3Instance = new Web3(window.ethereum);
-        try {
-          await window.ethereum.enable();
-          setWeb3(web3Instance);
-        } catch (error) {
-          console.error('User denied account access');
-        }
-      } else if (window.web3) {
-        const web3Instance = new Web3(window.web3.currentProvider);
+      try {
+        const web3Instance = await initializeWeb3();
         setWeb3(web3Instance);
-      } else {
-        console.error('No Ethereum browser extension detected');
+      } catch (error) {
+        console.error('Error initializing web3:', error);
       }
     };
 
