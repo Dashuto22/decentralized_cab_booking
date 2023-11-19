@@ -7,7 +7,7 @@ import './Navbar.css';
 import { IconContext } from 'react-icons';
 import userNames from './users.json'; // Import the JSON file
 import { initializeWeb3 } from '../utils/web3'; // Adjust the path based on your actual folder structure
-import RydeAsset from 'contractsAbi/Rydeasset.json';
+import RydeAsset from '../Rydeasset.json';
 import { useRideKoin } from '../pages/RideKoinContext';
 
 

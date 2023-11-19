@@ -78,7 +78,7 @@ const RiderScreen = () => {
 
   const getRideKoinBalance = async (web3, account) => {
     // Replace with your contract ABI and address
-    const contractAddress =  "0xb1692d63D4BB8E780295f96bEdfD5ee54f929B66"/* The address of your deployed RydeAsset contract */;
+    const contractAddress =  "0xD5d3Ce14A8EE4F1ca6732208dB070F77DFB6b75f"/* The address of your deployed RydeAsset contract */;
     const rideAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
     try {

@@ -56,7 +56,7 @@ function AssetManagement() {
         try {
 
 
-            const contractAddress = '0x98eA6F30bd1819920F2FE8aB42EfE233e33f9741';
+            const contractAddress = '0x489794436375AE5D6FCcc6EfcB9c84744881437C';
 
             const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
             setContractInstance(contractInstance);
@@ -78,7 +78,7 @@ function AssetManagement() {
     };
 
     const handleViewXRTPasses = async () => {
-        const contractAddress = '0x98eA6F30bd1819920F2FE8aB42EfE233e33f9741';
+        const contractAddress = '0x489794436375AE5D6FCcc6EfcB9c84744881437C';
         const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
         setContractInstance(contractInstance);
         try {
@@ -96,10 +96,31 @@ function AssetManagement() {
     };
     
     const handleCreateRideAsset = () => { /* logic */ };
-    const handleSendRideKoin = () => { /* logic */ };
+    
+
+    const handleSendRideKoin = async () => {
+        const contractAddress = '0x489794436375AE5D6FCcc6EfcB9c84744881437C';
+        const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
+        setContractInstance(contractInstance);
+        try {
+            if (contractInstance) {
+                // Call the smart contract function
+                const val = sendRideKoin;
+                const receiver = receiverAddress;
+                console.log("methods", contractInstance.methods);
+                const ride_koins = await contractInstance.methods.transferRideKoins(account, receiver, val).send({ from: account });
+                console.log('Ride koins sent:', ride_koins);
+                setSendRideKoin(ride_koins);
+            } else {
+                console.error('Contract instance not available');
+            }
+        } catch (error) {
+            console.error('Error in sending tokens call:', error);
+        }
+    };
 
     const handleSendXRTPasses = async () => {
-        const contractAddress = '0xda10351E712b82edbb6a9f8c86932c802413E2a8';
+        const contractAddress = '0x2579a54D8503e01bb2d7d7d0288d689583A09aBf';
         const contractInstance = new web3.eth.Contract(rydepassAbi, contractAddress);
         setContractInstance(contractInstance);
         try {
