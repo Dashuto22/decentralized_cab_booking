@@ -6,7 +6,8 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RideKoin.sol";
-import "./XclusiveRydePass.sol";
+import "./XclusiveRydepass.sol";
+
 
 contract RydeAsset is ERC1155, Ownable {
     uint256 public MINT_PRICE = 10 wei;
@@ -24,10 +25,21 @@ contract RydeAsset is ERC1155, Ownable {
         address rider;
         string fromLocation;
         string toLocation;
+        uint requestId;
+    }
+
+    struct AcceptedRide {
+        address driver;
+        address rider;
+        uint256 fare;
+        uint256 xclusiveRydePassID;
     }
 
     uint256 private currentRequestId = 0;
     mapping(uint256 => RideRequest) public rideRequests;
+    mapping(uint256 => AcceptedRide) public acceptedRides;
+
+    mapping(address => uint256[]) private acceptedRequestIds;
 
 
     constructor(address _rideKoinContractAddress, address _xclusiveRydePassContractAddress) 
@@ -191,7 +203,8 @@ contract RydeAsset is ERC1155, Ownable {
         rideRequests[currentRequestId] = RideRequest({
             rider: msg.sender,
             fromLocation: fromLocation,
-            toLocation: toLocation
+            toLocation: toLocation,
+            requestId: currentRequestId
         });
         emit RideRequested(currentRequestId, msg.sender, fromLocation, toLocation);
         currentRequestId++;
@@ -203,5 +216,38 @@ contract RydeAsset is ERC1155, Ownable {
             requests[i] = rideRequests[i];
         }
         return requests;
+    }
+
+
+
+    function acceptRideRequest(uint256 requestId, uint256 fare, uint256 xclusiveRydePassID) public {
+        require(userRoles[msg.sender] == UserRole.Driver, "Only drivers can accept requests");
+        require(rideRequests[requestId].rider != address(0), "Invalid request ID");
+        // Mark the request as accepted
+
+        // Add the accepted ride to the mapping
+        acceptedRides[requestId] = AcceptedRide({
+            driver: msg.sender,
+            rider: rideRequests[requestId].rider,
+            fare: fare,
+            xclusiveRydePassID: xclusiveRydePassID
+        });
+
+        // Store the request ID in the rider's accepted request IDs
+        acceptedRequestIds[rideRequests[requestId].rider].push(requestId);
+    }
+
+    function viewAcceptedRequest(address rider) public view returns (AcceptedRide[] memory) {
+        require(rider == msg.sender, "Only the rider who created the request can view it");
+
+        uint256[] storage riderAcceptedRequestIds = acceptedRequestIds[rider];
+        AcceptedRide[] memory riderAcceptedRides = new AcceptedRide[](riderAcceptedRequestIds.length);
+
+        for (uint256 i = 0; i < riderAcceptedRequestIds.length; i++) {
+            uint256 requestId = riderAcceptedRequestIds[i];
+            riderAcceptedRides[i] = acceptedRides[requestId];
+        }
+
+        return riderAcceptedRides;
     }
 }

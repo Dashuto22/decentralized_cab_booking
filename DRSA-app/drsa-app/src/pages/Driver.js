@@ -52,7 +52,7 @@ const DriverScreen = () => {
 
         // Call the smart contract function after the spinner
         try {
-            const contractAddress = "0xb1692d63D4BB8E780295f96bEdfD5ee54f929B66"; // Your deployed RydeAsset contract address
+            const contractAddress = "0x154830F0870f360d68A2E7e2109648643E87f094"; // Your deployed RydeAsset contract address
             const rideAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
             const requests = await rideAssetContract.methods.viewRideRequests().call({from: account});
             console.log("requests", requests);
@@ -124,7 +124,7 @@ const DriverScreen = () => {
 
     const getRideKoinBalance = async (web3, account) => {
         // Replace with your contract ABI and address
-        const contractAddress =  "0xb1692d63D4BB8E780295f96bEdfD5ee54f929B66"/* The address of your deployed RydeAsset contract */;
+        const contractAddress =  "0x154830F0870f360d68A2E7e2109648643E87f094"/* The address of your deployed RydeAsset contract */;
         const rideAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
         try {

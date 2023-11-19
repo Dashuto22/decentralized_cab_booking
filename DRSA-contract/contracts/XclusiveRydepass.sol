@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.21;
+pragma solidity ^0.8.20;
 
 
 
@@ -17,6 +17,7 @@ contract XclusiveRydePass is ERC721, ERC721Enumerable, ERC721Pausable, Ownable, 
 
     mapping(address=> uint256[]) private tokenOwnerstoIds;
     
+
 
     constructor()
         ERC721("XclusiveRydePass", "XRP")

@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity 0.8.21;
+pragma solidity 0.8.20;
 
 
 contract Migrations {
@@ -18,3 +18,4 @@ contract Migrations {
     last_completed_migration = completed;
   }
 }
+

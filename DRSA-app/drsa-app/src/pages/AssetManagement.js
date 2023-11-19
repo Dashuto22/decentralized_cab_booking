@@ -52,7 +52,7 @@ function AssetManagement() {
 
     const handleBuyRideKoin = async () => {
         try {
-            const contractAddress = '0xb1692d63D4BB8E780295f96bEdfD5ee54f929B66';
+            const contractAddress = '0x154830F0870f360d68A2E7e2109648643E87f094';
             const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
             setContractInstance(contractInstance);
 

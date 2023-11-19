@@ -1,5 +1,7 @@
-const Migrations = artifacts.require("Migrations");
+const RideKoin = artifacts.require("RideKoin");
+const RidePass = artifacts.require("XclusiveRydepass");
 
 module.exports = function (deployer) {
-  deployer.deploy(Migrations);
+  deployer.deploy(RideKoin, 10);
+  deployer.deploy(RidePass);
 };
