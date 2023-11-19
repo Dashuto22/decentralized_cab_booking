@@ -135,7 +135,7 @@ function Register() {
             <>
               <div className="user-info">
                 <h2>{`Welcome, ${account}`}</h2>
-                <p>{userRole === 1 ? 'Role: Driver' : 'Role: Rider'}</p>
+                <p>{userRole.toString() === "1" ? 'Role: Driver' : 'Role: Rider'}</p>
               </div>
               <button className="register-button" onClick={handleLogin}>
                 <FaLock />
