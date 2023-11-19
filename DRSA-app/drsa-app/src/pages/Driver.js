@@ -7,6 +7,7 @@ import Modal from 'react-modal'; // Install react-modal if not already installed
 import RiderDetail from '../components/RiderDetails'; // The new component created above
 import './Driver.css'
 import userNames from "../components/users.json";
+import config from '../config/config'; // Adjust the path based on your file structure
 
 const customStyles = {
     content: {
@@ -52,12 +53,13 @@ const DriverScreen = () => {
 
         // Call the smart contract function after the spinner
         try {
-            const contractAddress = "0x154830F0870f360d68A2E7e2109648643E87f094"; // Your deployed RydeAsset contract address
+            const contractAddress = config.rydeAssetContractAddress; // Your deployed RydeAsset contract address
             const rideAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
             const requests = await rideAssetContract.methods.viewRideRequests().call({from: account});
             console.log("requests", requests);
             // Process the requests
             const processedRequests = requests.map((request, index) => {
+                console.log("request : ", request)
                 // Replace with your actual mapping from address to name
                 const riderName = userNames[request[0]]; // Placeholder for actual name mapping
                 return {
@@ -65,7 +67,8 @@ const DriverScreen = () => {
                     dropLocation: request[2],
                     stars: 4, // hardcoded for now
                     distance: '2 mins', // hardcoded for now
-                    profilePic: '/path/to/image' // placeholder or fetch from your mapping
+                    profilePic: '/path/to/image', // placeholder or fetch from your mapping
+                    requestId: request[3]
                 };
             });
 
@@ -124,7 +127,7 @@ const DriverScreen = () => {
 
     const getRideKoinBalance = async (web3, account) => {
         // Replace with your contract ABI and address
-        const contractAddress =  "0x154830F0870f360d68A2E7e2109648643E87f094"/* The address of your deployed RydeAsset contract */;
+        const contractAddress =  config.rydeAssetContractAddress/* The address of your deployed RydeAsset contract */;
         const rideAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
         try {

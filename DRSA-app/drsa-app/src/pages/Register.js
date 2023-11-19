@@ -6,6 +6,7 @@ import contractAbi from '../Rydeasset.json';
 import './Register.css'; // Assuming you have a CSS file for styling
 import { initializeWeb3 } from '../utils/web3'; // Adjust the path based on your actual folder structure
 import { useRideKoin } from './RideKoinContext';
+import config from '../config/config'; // Adjust the path based on your file structure
 
 function Register() {
   const [web3, setWeb3] = useState(null);
@@ -39,7 +40,7 @@ function Register() {
 
   const handleRegistration = async (registrationFunction) => {
     if (web3 && account) {
-      const contractAddress = '0x154830F0870f360d68A2E7e2109648643E87f094';
+      const contractAddress = '0x8fa047F0232921E65Fba1487b175d848743736A8';
       const rydeContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
       try {
@@ -71,7 +72,7 @@ function Register() {
 
   const handleLogin = async () => {
     if (web3 && account) {
-      const contractAddress = '0x154830F0870f360d68A2E7e2109648643E87f094';
+      const contractAddress = '0x8fa047F0232921E65Fba1487b175d848743736A8';
       const rydeContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
       try {
@@ -81,7 +82,7 @@ function Register() {
         console.log("role is: ", role);
         if(role==2)
           navigate('/rider'); // Redirect to rider page or driver page based on role
-        else{
+        else if(role==1){
           navigate('/driver');
         }
         setRideKoins(previousKoins => previousKoins + parseInt(balance));

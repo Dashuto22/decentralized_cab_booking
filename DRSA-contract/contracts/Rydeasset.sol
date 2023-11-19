@@ -33,13 +33,25 @@ contract RydeAsset is ERC1155, Ownable {
         address rider;
         uint256 fare;
         uint256 xclusiveRydePassID;
+        uint requestId;
+        uint acceptRequestId;
+    }
+
+    struct ConfirmedRide {
+        address rider;
+        uint256 fare;
+        address driver;
     }
 
     uint256 private currentRequestId = 0;
+    uint256 private currentAcceptRequestId = 0;
+
     mapping(uint256 => RideRequest) public rideRequests;
     mapping(uint256 => AcceptedRide) public acceptedRides;
 
     mapping(address => uint256[]) private acceptedRequestIds;
+    mapping(address => ConfirmedRide[]) public confirmedRides;
+
 
 
     constructor(address _rideKoinContractAddress, address _xclusiveRydePassContractAddress) 
@@ -103,60 +115,6 @@ contract RydeAsset is ERC1155, Ownable {
         return tokenDescriptions[tokenId];
     }
 
-        struct SpecialTokenDetail {
-        uint256 rydeKoinAmount;
-        uint256 xclusiveRydePassID;
-    }
-
-    mapping(uint256 => uint256) public specialTokenValues; // The value of each SpecialToken in wei
-
-
-    mapping(uint256 => SpecialTokenDetail) public specialTokenDetails;
-
-    function createSpecialToken(uint256 rydeKoinAmount, uint256 xclusiveRydePassID) public payable {
-        require(rideKoinContract._balanceOf(msg.sender) >= rydeKoinAmount, "Not enough RideKoin");
-        require(xclusiveRydePassContract.ownerOf(xclusiveRydePassID) == msg.sender, "You don't own the specified XclusiveRydePass");
-        rideKoinContract.transferFrom(msg.sender, address(this), rydeKoinAmount);
-        xclusiveRydePassContract.transferFrom(msg.sender, address(this), xclusiveRydePassID);
-
-        specialTokenDetails[currentTokenID] = SpecialTokenDetail({
-            rydeKoinAmount: rydeKoinAmount,
-            xclusiveRydePassID: xclusiveRydePassID
-        });
-
-        _mint(msg.sender, currentTokenID, 1, "");
-        currentTokenID++;
-    } /* Before using this function ensure that the smart contract is approved by both RideKoin and XRP smart contracts as we are authorising the ERC1155
-        Contract to transfer money on behaf of the user. This method will be improved in phase 2.
-    
-    */
-
-    modifier onlyOwnerOrAccount(address account) {
-        require(account == msg.sender || owner() == msg.sender, "Not the owner or the specified ownr");
-        _;
-    }
-
-    function viewOwnedSpecialTokens(address account) public onlyOwnerOrAccount(account) view returns (uint256[] memory) {
-        uint256 tokenCount = balanceOf(account,2);
-        uint256[] memory ownedTokens = new uint256[](tokenCount);
-        
-        uint256 counter = 0;
-        for (uint256 i = 0; i < currentTokenID; i++) {
-            if (balanceOf(account, i) > 0) {
-                ownedTokens[counter] = i;
-                counter++;
-            }
-        }
-        return ownedTokens;
-    }
-
-
-    function returnSpecialToken(uint256 specialTokenID) external {
-       require(balanceOf(msg.sender, specialTokenID) > 0, "You don't own the specified special token");
-        uint256 additionalRideKoinsForXclusivePass = 2;
-        rideKoinContract.transfer(msg.sender, specialTokenDetails[specialTokenID].rydeKoinAmount + additionalRideKoinsForXclusivePass);
-        delete specialTokenDetails[specialTokenID];
-    }
 
     mapping(uint256 => uint256) public xclusivePassPrices;
 
@@ -226,15 +184,18 @@ contract RydeAsset is ERC1155, Ownable {
         // Mark the request as accepted
 
         // Add the accepted ride to the mapping
-        acceptedRides[requestId] = AcceptedRide({
+        acceptedRides[currentAcceptRequestId] = AcceptedRide({
             driver: msg.sender,
             rider: rideRequests[requestId].rider,
             fare: fare,
-            xclusiveRydePassID: xclusiveRydePassID
+            xclusiveRydePassID: xclusiveRydePassID,
+            requestId: requestId,
+            acceptRequestId: currentAcceptRequestId
         });
 
         // Store the request ID in the rider's accepted request IDs
-        acceptedRequestIds[rideRequests[requestId].rider].push(requestId);
+        acceptedRequestIds[rideRequests[requestId].rider].push(currentAcceptRequestId);
+        currentAcceptRequestId++;
     }
 
     function viewAcceptedRequest(address rider) public view returns (AcceptedRide[] memory) {
@@ -249,5 +210,25 @@ contract RydeAsset is ERC1155, Ownable {
         }
 
         return riderAcceptedRides;
+    }
+
+    function bookRide(uint256 acceptRequestId) public {
+        require(userRoles[msg.sender] == UserRole.Rider, "Only riders can book rides");
+        require(acceptedRides[acceptRequestId].rider != address(0), "Invalid request ID");
+        require(rideKoinContract._balanceOf(msg.sender) >= acceptedRides[acceptRequestId].fare, "Insufficient RideKoins");
+
+        // Transfer RideKoins from rider to contract
+        rideKoinContract.transferFrom(msg.sender, address(this), acceptedRides[acceptRequestId].fare);
+
+        // Add the ride to the confirmed list for the driver
+        confirmedRides[acceptedRides[acceptRequestId].driver].push(ConfirmedRide({
+            rider: msg.sender,
+            fare: acceptedRides[acceptRequestId].fare,
+            driver: acceptedRides[acceptRequestId].driver
+        }));
+
+        // Remove the request from rideRequests and acceptedRides
+        delete rideRequests[acceptedRides[acceptRequestId].requestId];
+        delete acceptedRides[acceptRequestId];
     }
 }

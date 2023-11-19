@@ -6,6 +6,7 @@ import userNames from "../components/users.json"; // Make sure the path is corre
 import { FaSpinner } from 'react-icons/fa';
 import DriverDetail from "../components/DriverDetails";
 import Modal from 'react-modal'; // Install react-modal if not already installed
+import config from '../config/config'; // Adjust the path based on your file structure
 
 
 
@@ -116,7 +117,7 @@ const RiderScreen = () => {
 
   const getRideKoinBalance = async (web3, account) => {
     // Replace with your contract ABI and address
-    const contractAddress = "0x154830F0870f360d68A2E7e2109648643E87f094"/* The address of your deployed RydeAsset contract */;
+    const contractAddress = config.rydeAssetContractAddress/* The address of your deployed RydeAsset contract */;
     const rideAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
     try {
@@ -157,7 +158,7 @@ const RiderScreen = () => {
       alert("Please enter both 'From' and 'To' locations");
       return;
     }
-    const contractAddress = "0x154830F0870f360d68A2E7e2109648643E87f094";
+    const contractAddress = config.rydeAssetContractAddress;
     const contract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
     try {
@@ -188,6 +189,7 @@ const RiderScreen = () => {
           distance: '2 mins away', // Hardcoded for now
           fare: ride.fare,
           xrp: ride.xclusiveRydePassID,
+          acceptRequestId: ride.acceptRequestId
           // ... any other details you want to include
         }));
         setAcceptedRides(rideDetails);
@@ -204,7 +206,7 @@ const RiderScreen = () => {
   };
 
   const viewStatus = () => {
-    const contractAddress = "0x154830F0870f360d68A2E7e2109648643E87f094";
+    const contractAddress = config.rydeAssetContractAddress;
     const contract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
     checkForAcceptedRides(contract, account);
     console.log("kurgu", acceptedRides);
@@ -212,7 +214,7 @@ const RiderScreen = () => {
   };
 
   const refreshAcceptedRides = () => {
-    const contractAddress = "0x154830F0870f360d68A2E7e2109648643E87f094"; // Your deployed RydeAsset contract address
+    const contractAddress = config.rydeAssetContractAddress; // Your deployed RydeAsset contract address
     const contract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
     checkForAcceptedRides(contract, account);
   };

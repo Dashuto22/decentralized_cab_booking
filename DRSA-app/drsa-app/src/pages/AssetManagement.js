@@ -4,6 +4,7 @@ import contractAbi from '../Rydeasset.json';
 
 import './AssetManagement.css'; // Import the CSS file
 import { useRideKoin } from './RideKoinContext';
+import config from '../config/config'; // Adjust the path based on your file structure
 
 
 function AssetManagement() {
@@ -52,7 +53,7 @@ function AssetManagement() {
 
     const handleBuyRideKoin = async () => {
         try {
-            const contractAddress = '0x154830F0870f360d68A2E7e2109648643E87f094';
+            const contractAddress = '0x8fa047F0232921E65Fba1487b175d848743736A8';
             const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
             setContractInstance(contractInstance);
 
