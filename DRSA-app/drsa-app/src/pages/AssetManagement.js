@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { initializeWeb3 } from '../utils/web3';
-import contractAbi from '../Rydeasset.json';
-import rydepassAbi from '../XclusiveRydepass.json';
+import RydeAsset from 'contractsAbi/Rydeasset.json';
+import RydePass from 'contractsAbi/XclusiveRydePass.json'
 
 import './AssetManagement.css'; // Import the CSS file
 import { useRideKoin } from './RideKoinContext';
@@ -24,6 +24,25 @@ function AssetManagement() {
     const [sendRideAsset, setSendRideAsset] = useState('');
     const [receiverAddress, setReceiverAddress] = useState('');
     const [contractInstance, setContractInstance] = useState(null);
+    const [userRole, setUserRole] = useState(null); // State to store user role
+    const [createXRPValue, setCreateXRPValue] = useState(''); // State for XRP Pass creation value
+
+    const [xrpPassIdToSetPrice, setXrpPassIdToSetPrice] = useState('');
+    const [xrpPassPrice, setXrpPassPrice] = useState('');
+
+    useEffect(() => {
+        // Fetch user role from the contract
+        const fetchUserRole = async () => {
+            if (web3 && account) {
+                const contractInstance = new web3.eth.Contract(RydeAsset.abi, config.rydeAssetContractAddress);
+                const role = await contractInstance.methods.getUserRole(account).call({ from: account });
+                setUserRole(Number(role)); // Set user role (1 for driver, 2 for rider)
+                console.log("Heya! ", role);
+            }
+        };
+
+        fetchUserRole();
+    }, [web3, account]);
 
 
     useEffect(() => {
@@ -56,7 +75,7 @@ function AssetManagement() {
     const handleBuyRideKoin = async () => {
         try {
             const contractAddress = config.rydeAssetContractAddress;
-            const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
+            const contractInstance = new web3.eth.Contract(RydeAsset.abi, contractAddress);
             setContractInstance(contractInstance);
 
 
@@ -77,7 +96,7 @@ function AssetManagement() {
 
     const handleViewXRTPasses = async () => {
         const contractAddress = config.rydeAssetContractAddress;;
-        const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
+        const contractInstance = new web3.eth.Contract(RydeAsset.abi, contractAddress);
         setContractInstance(contractInstance);
         try {
             if (contractInstance) {
@@ -98,7 +117,7 @@ function AssetManagement() {
 
     const handleSendRideKoin = async () => {
         const contractAddress = config.rydeAssetContractAddress;;
-        const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
+        const contractInstance = new web3.eth.Contract(RydeAsset.abi, contractAddress);
         setContractInstance(contractInstance);
         try {
             if (contractInstance) {
@@ -119,7 +138,7 @@ function AssetManagement() {
 
     const handleSendXRTPasses = async () => {
         const contractAddress = config.xrtPassContract;
-        const contractInstance = new web3.eth.Contract(rydepassAbi, contractAddress);
+        const contractInstance = new web3.eth.Contract(RydePass.abi, contractAddress);
         setContractInstance(contractInstance);
         try {
             if (contractInstance) {
@@ -144,8 +163,56 @@ function AssetManagement() {
 
     const handleSendRideAsset = () => { /* logic */ };
 
+    const handleCreateXRPPass = async () => {
+        if (userRole === 1) { // Check if user is a driver
+            try {
+                const contractInstance = new web3.eth.Contract(RydeAsset.abi, config.rydeAssetContractAddress);
+                // Logic to create XRP Pass and set its value
+                console.log("account: ", account);
+                await contractInstance.methods.mintXclusiveRydePass(account).send({ from: account, value: 10 });
+                console.log("XRP Pass created with value: ", createXRPValue);
+            } catch (error) {
+                console.error('Error creating XRP Pass:', error);
+            }
+        } else {
+            alert("Only drivers can create XRP Passes.");
+        }
+    };
+
+    const handleSetXRPPrice = async () => {
+        if (!xrpPassIdToSetPrice || !xrpPassPrice) {
+            alert("Please enter both the XRP Pass ID and the price to set");
+            return;
+        }
+
+        try {
+            const contractInstance = new web3.eth.Contract(RydeAsset.abi, config.rydeAssetContractAddress);
+            await contractInstance.methods.setXclusivePassPrice(xrpPassIdToSetPrice, xrpPassPrice).send({ from: account });
+            alert(`Price for XRP Pass ID ${xrpPassIdToSetPrice} set to ${xrpPassPrice}`);
+        } catch (error) {
+            console.error('Error setting XRP Pass price:', error);
+            alert('Failed to set price for XRP Pass.');
+        }
+    };
+
+    const XRPBox = () => (
+        <div className="card">
+            <div className="row">
+                <button onClick={handleCreateXRPPass}>Create XRP Pass</button>
+            </div>
+        </div>
+    );
+
     return (
         <div className="asset-management">
+            {userRole === 1 && <XRPBox />} {/* Render XRP Box if userRole is 1 */}
+            {userRole === 1 && <div className="card">
+                <div className="row">
+                    <input type="text" value={xrpPassIdToSetPrice} onChange={(e) => setXrpPassIdToSetPrice(e.target.value)} placeholder="Enter XRP Pass ID" />
+                    <input type="text" value={xrpPassPrice} onChange={(e) => setXrpPassPrice(e.target.value)} placeholder="Set Price" />
+                    <button onClick={handleSetXRPPrice}>Set Price</button>
+                </div>
+            </div>}
             <div className="card">
                 <div className="row">
                     <input type="text" value={buyRideKoin} onChange={(e) => setBuyRideKoin(e.target.value)} placeholder="Buy RideKoin" />

@@ -3,6 +3,8 @@ import Web3 from 'web3';
 import RydeAsset from 'contractsAbi/Rydeasset.json';
 import '../App.css';
 import userNames from "../components/users.json"; // Make sure the path is correct
+import cars from "../components/cars.json"
+import models from "../components/models.json"
 import { FaSpinner } from 'react-icons/fa';
 import DriverDetail from "../components/DriverDetails";
 import Modal from 'react-modal'; // Install react-modal if not already installed
@@ -37,6 +39,8 @@ const RiderScreen = () => {
       maxWidth: '600px',
       width: '80%',
       border: '1px solid #ccc',
+      maxHeight: '80vh', // Maximum height of the modal
+      overflowY: 'auto' // Enable vertical scrolling
     },
     overlay: {
       backgroundColor: 'rgba(0, 0, 0, 0.75)',
@@ -148,9 +152,9 @@ const RiderScreen = () => {
 
   useEffect(() => {
     console.log("Accepted Rides Updated:", acceptedRides);
-    if (acceptedRides.length > 0) {
+    // if (acceptedRides.length > 0) {
       setIsOpen(true); // Open the modal if there are accepted rides
-    }
+
   }, [acceptedRides]);
 
   const handleBookRide = async () => {
@@ -182,14 +186,20 @@ const RiderScreen = () => {
       const rides = await contract.methods.viewAcceptedRequest(account).call({from: account});
       console.log("rideee", rides);
       if (rides.length > 0) {
-        const rideDetails = rides.map((ride) => ({
+
+        const validRides = rides.filter(ride =>
+            ride.driver !== "0x0000000000000000000000000000000000000000" &&
+            ride.rider !== "0x0000000000000000000000000000000000000000"
+        );
+        const rideDetails = validRides.map((ride) => ({
           name: userNames[ride.driver], // This assumes you have a mapping of driver addresses to names
-          model: 'Tesla Model 3', // Hardcoded for now
+          model: models[ride.driver], // Hardcoded for now
           stars: 5, // Hardcoded for now
           distance: '2 mins away', // Hardcoded for now
           fare: ride.fare,
-          xrp: ride.xclusiveRydePassID,
-          acceptRequestId: ride.acceptRequestId
+          xrpId: ride.xrpID,
+          acceptRequestId: ride.acceptRequestId,
+          photos: cars[ride.driver]
           // ... any other details you want to include
         }));
         setAcceptedRides(rideDetails);

@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import RydeAsset from 'contractsAbi/Rydeasset.json';
+import XclusiveRP from 'contractsAbi/XclusiveRydePass.json';
+
 import '../App.css';
 import { FaSpinner } from 'react-icons/fa'; // For the spinner icon
 import Modal from 'react-modal'; // Install react-modal if not already installed
 import RiderDetail from '../components/RiderDetails'; // The new component created above
 import './Driver.css'
 import userNames from "../components/users.json";
+import photos from "../components/photos.json";
 import config from '../config/config'; // Adjust the path based on your file structure
 
 const customStyles = {
@@ -24,6 +27,8 @@ const customStyles = {
         width: '100%',
         border: '1px solid #ccc', // Optional: add a border to the modal
         boxSizing: 'border-box', // Make sure padding and borders are included in the total width and height
+        maxHeight: '80vh', // Maximum height of the modal
+        overflowY: 'auto' // Enable vertical scrolling
     },
     overlay: {
         backgroundColor: 'rgba(0, 0, 0, 0.75)', // Optional: change the overlay background color for better contrast
@@ -41,6 +46,7 @@ const DriverScreen = () => {
     const [isSearching, setIsSearching] = useState(false);
     const [modalIsOpen, setIsOpen] = useState(false);
     const [riders, setRiders] = useState([]); // You would fetch this from your backend
+    const [confirmedRides, setConfirmedRides] = useState([]);
 
     // Dummy data for riders
     const dummyRiders = [
@@ -58,7 +64,10 @@ const DriverScreen = () => {
             const requests = await rideAssetContract.methods.viewRideRequests().call({from: account});
             console.log("requests", requests);
             // Process the requests
-            const processedRequests = requests.map((request, index) => {
+            const validRequest = requests.filter(req =>
+                req.rider !== "0x0000000000000000000000000000000000000000"
+            );
+            const processedRequests = validRequest.map((request, index) => {
                 console.log("request : ", request)
                 // Replace with your actual mapping from address to name
                 const riderName = userNames[request[0]]; // Placeholder for actual name mapping
@@ -67,7 +76,7 @@ const DriverScreen = () => {
                     dropLocation: request[2],
                     stars: 4, // hardcoded for now
                     distance: '2 mins', // hardcoded for now
-                    profilePic: '/path/to/image', // placeholder or fetch from your mapping
+                    profilePic: photos[request[0]], // placeholder or fetch from your mapping
                     requestId: request[3]
                 };
             });
@@ -119,6 +128,53 @@ const DriverScreen = () => {
 
         loadAccount();
     }, [web3]);
+
+    useEffect(() => {
+            if (confirmedRides.flag === 0) {
+                console.log("whammmba whaamba");
+                setConfirmedRides(confirmedRides);
+            }else{
+                console.log("Jambaa Jamba");
+            }
+
+    }, [confirmedRides]);
+
+    useEffect(() => {
+        const fetchConfirmedRides = async () => {
+            try {
+                const contract = new web3.eth.Contract(RydeAsset.abi, config.rydeAssetContractAddress);
+                console.log("acc: ", contract.methods);
+                const confirmedRidesData = await contract.methods.getConfirmedRidesForDriver(account).call({ from: account });
+                setConfirmedRides(confirmedRidesData);
+                console.log("confirmed ", confirmedRidesData);
+                for (let ride of confirmedRidesData) {
+                    await transferXRPToRider(ride.xrpToken, ride.rider);
+                    const confirmedRidesDataNew = await contract.methods.delConfirmedRidesForDriver(account).send({ from: account });
+                    setConfirmedRides(confirmedRidesDataNew);
+                    console.log(" confirmed and deleted: ", confirmedRidesDataNew);
+                }
+            } catch (error) {
+                console.error("Error fetching confirmed rides: ", error);
+            }
+        };
+
+        if (web3 && account) {
+            fetchConfirmedRides();
+
+        }
+    }, [web3, account]);
+
+
+    const transferXRPToRider = async (xrpTokenId, riderAddress) => {
+        const contract = new web3.eth.Contract(XclusiveRP.abi, config.xrtPassContract);
+        try {
+            await contract.methods.transferToken(riderAddress, account, xrpTokenId).send({ from: account });
+            console.log(`XRP token ${xrpTokenId} transferred to rider.`);
+            // ... additional UI updates
+        } catch (error) {
+            console.error('Error transferring XRP token:', error);
+        }
+    };
 
     const toggleSidebar = () => {
         setSidebarOpen(!sidebarOpen);

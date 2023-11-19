@@ -15,9 +15,7 @@ contract RydeAsset is ERC1155, Ownable {
     RideKoin public rideKoinContract;
     XclusiveRydePass public xclusiveRydePassContract;
 
-    uint256 private currentTokenID = 2; 
 
-    mapping(uint256 => string) public tokenDescriptions;
     enum UserRole { None, Driver, Rider }
     mapping(address => UserRole) public userRoles;
 
@@ -32,7 +30,7 @@ contract RydeAsset is ERC1155, Ownable {
         address driver;
         address rider;
         uint256 fare;
-        uint256 xclusiveRydePassID;
+        uint xrpID;
         uint requestId;
         uint acceptRequestId;
     }
@@ -40,7 +38,8 @@ contract RydeAsset is ERC1155, Ownable {
     struct ConfirmedRide {
         address rider;
         uint256 fare;
-        address driver;
+        uint256 xrpToken;
+        uint flag;
     }
 
     uint256 private currentRequestId = 0;
@@ -51,12 +50,13 @@ contract RydeAsset is ERC1155, Ownable {
 
     mapping(address => uint256[]) private acceptedRequestIds;
     mapping(address => ConfirmedRide[]) public confirmedRides;
+    mapping(uint256 => uint256) public xclusivePassPrices;
 
 
 
-    constructor(address _rideKoinContractAddress, address _xclusiveRydePassContractAddress) 
-        ERC1155("abcdce") 
-            Ownable(msg.sender)  
+    constructor(address _rideKoinContractAddress, address _xclusiveRydePassContractAddress)
+        ERC1155("abcdce")
+            Ownable(msg.sender)
     {
         rideKoinContract = RideKoin(_rideKoinContractAddress);
         xclusiveRydePassContract = XclusiveRydePass(_xclusiveRydePassContractAddress);
@@ -85,7 +85,7 @@ contract RydeAsset is ERC1155, Ownable {
     require(value > 0, "Value must be greater than 0");
     require(rideKoinContract._balanceOf(from) >= value, "Insufficient RideKoin balance");
     rideKoinContract.transferRidekoins(from, to, value);
-    
+
 }
 
     function transferXclusiveRydePass(address from, address to, uint256 tokenId) public {
@@ -101,14 +101,6 @@ contract RydeAsset is ERC1155, Ownable {
         rideKoinContract.transfer(msg.sender, tokenAmount);
     }
 
-    function sellRideKoin(uint256 tokenAmount) public {
-        rideKoinContract.sellToken(tokenAmount);
-    }
-
-    function withdrawFundsFromRideKoin() public onlyOwner {
-        rideKoinContract.withdraw();
-    }
-
 
     function getRideKoinBalance(address user) public view returns (uint256) {
         return rideKoinContract._balanceOf(user);
@@ -119,21 +111,15 @@ contract RydeAsset is ERC1155, Ownable {
     }
 
 
-    function getTokenDescription(uint256 tokenId) external view returns (string memory) {
-        return tokenDescriptions[tokenId];
-    }
-
-
-    mapping(uint256 => uint256) public xclusivePassPrices;
 
     function setXclusivePassPrice(uint256 xclusiveRydePassID, uint256 price) external {
         require(xclusiveRydePassContract.ownerOf(xclusiveRydePassID) == msg.sender, "You don't own the specified XclusiveRydePass");
-        xclusivePassPrices[xclusiveRydePassID] = price;     
+        xclusivePassPrices[xclusiveRydePassID] = price;
     }
 
     function mintBatchXclusiveRydePass(address[] memory to) public payable {
         require(msg.value == MINT_PRICE * to.length, "Incorrect amount of Ether sent");
-        
+
         for (uint256 i = 0; i < to.length; i++) {
             xclusiveRydePassContract.safeMint{value: MINT_PRICE}(to[i]);
         }
@@ -145,14 +131,14 @@ contract RydeAsset is ERC1155, Ownable {
         uint256[] memory amounts = new uint256[](to.length);
         for (uint256 i = 0; i < to.length; i++) {
             amounts[i] = 1; // You can customize the amounts if needed
-        
+
         safeBatchTransferFrom(from, to[i], tokenId, amounts, "");
         }
 
         //safeBatchTransferFrom(from, to, tokenId, amounts, "");
     }
 
-    
+
 
     function transferBatchXclusiveRydePass(address from, address[] memory to, uint256[] memory tokenId) public {
         require(to.length == tokenId.length, "Array length mismatch");
@@ -160,8 +146,6 @@ contract RydeAsset is ERC1155, Ownable {
         for (uint256 i = 0; i < to.length; i++) {
             xclusiveRydePassContract.transferFrom(from, to[i], tokenId[i]);
         }
-
-
     }
 
     function createRideRequest(string memory fromLocation, string memory toLocation) public {
@@ -186,7 +170,7 @@ contract RydeAsset is ERC1155, Ownable {
 
 
 
-    function acceptRideRequest(uint256 requestId, uint256 fare, uint256 xclusiveRydePassID) public {
+    function acceptRideRequest(uint256 requestId, uint256 fare, uint256 xrpID ) public {
         require(userRoles[msg.sender] == UserRole.Driver, "Only drivers can accept requests");
         require(rideRequests[requestId].rider != address(0), "Invalid request ID");
         // Mark the request as accepted
@@ -196,7 +180,7 @@ contract RydeAsset is ERC1155, Ownable {
             driver: msg.sender,
             rider: rideRequests[requestId].rider,
             fare: fare,
-            xclusiveRydePassID: xclusiveRydePassID,
+            xrpID : xrpID,
             requestId: requestId,
             acceptRequestId: currentAcceptRequestId
         });
@@ -232,11 +216,29 @@ contract RydeAsset is ERC1155, Ownable {
         confirmedRides[acceptedRides[acceptRequestId].driver].push(ConfirmedRide({
             rider: msg.sender,
             fare: acceptedRides[acceptRequestId].fare,
-            driver: acceptedRides[acceptRequestId].driver
+            xrpToken: acceptedRides[acceptRequestId].xrpID,
+            flag:0
         }));
 
+        for (uint256 i = 0; i < currentAcceptRequestId; i++) {
+            uint256 requestId = acceptedRides[i].requestId;
+            if(acceptedRides[acceptRequestId].requestId == requestId){
+                delete acceptedRides[i];
+            }
+        }
         // Remove the request from rideRequests and acceptedRides
         delete rideRequests[acceptedRides[acceptRequestId].requestId];
         delete acceptedRides[acceptRequestId];
     }
+
+    function delConfirmedRidesForDriver(address driver) public {
+        delete confirmedRides[driver];
+    }
+
+    function getConfirmedRidesForDriver(address driver) public view returns (ConfirmedRide[] memory) {
+        return confirmedRides[driver];
+    }
+
+
+
 }

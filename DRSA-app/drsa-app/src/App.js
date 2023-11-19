@@ -7,6 +7,7 @@ import Register from './pages/Register';
 import RiderScreen from './pages/Rider';
 import DriverScreen from "./pages/Driver";
 import AssetManagement from "./pages/AssetManagement";
+import XRPPasses from "./pages/XRPPasses";
 import { RideKoinProvider } from './pages/RideKoinContext';
 
 
@@ -23,6 +24,7 @@ function App(){
         <Route path="/rider" element={<RiderScreen />} />
         <Route path="/driver" element={<DriverScreen />} />
         <Route path="/payment" element={<AssetManagement />} />
+        <Route path="/xrp" element={<XRPPasses />} />
       </Routes>
     </Router>
           </ RideKoinProvider>

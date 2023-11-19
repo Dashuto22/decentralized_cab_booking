@@ -32,7 +32,7 @@ contract XclusiveRydePass is ERC721, ERC721Enumerable, ERC721Pausable, Ownable, 
     function getTokens(address owner) public view returns (uint256[] memory) {
             require(owner == owner|| owner == msg.sender, "Only the owner or the associated account can check token ids");
             return tokenOwnerstoIds[owner];
-}
+    }
 
     function getOwnerOfToken(uint256 tokenId) public view returns (address) {
         return ownerOf(tokenId);

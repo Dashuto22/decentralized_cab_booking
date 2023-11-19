@@ -9,6 +9,7 @@ import userNames from './users.json'; // Import the JSON file
 import { initializeWeb3 } from '../utils/web3'; // Adjust the path based on your actual folder structure
 import RydeAsset from '../Rydeasset.json';
 import { useRideKoin } from '../pages/RideKoinContext';
+import config from '../config/config'; // Adjust the path based on your file structure
 
 
 
@@ -54,7 +55,6 @@ function Navbar() {
     }, [web3]);
 
 
-
     // useEffect(() => {
     //     Fetch RideKoins and XRP Passes balances
     //     const loadBalances = async () => {
@@ -80,6 +80,7 @@ function Navbar() {
         <div>
             <IconContext.Provider value={{ color: '#fff' }}>
                 <div className='navbar'>
+                    DRSA
                     <Link to="#" className='menu-bars'>
                         <FaIcons.FaBars onClick={showSidebar}/>
                     </Link>

@@ -12,6 +12,8 @@ function Register() {
   const [web3, setWeb3] = useState(null);
   const [account, setAccount] = useState('');
   const navigate = useNavigate();
+  const [userRole, setUserRole] = useState(0);
+
   const { setRideKoins } = useRideKoin();
 
   useEffect(() => {
@@ -37,6 +39,24 @@ function Register() {
 
     loadAccount();
   }, [web3]);
+
+  useEffect(() => {
+    const loadUserRole = async () => {
+      if (web3 && account) {
+        const contractAddress = config.rydeAssetContractAddress;
+        const rydeContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
+        const role = await rydeContract.methods.getUserRole(account).call({ from: account });
+        setUserRole(role);
+      }
+    };
+
+    loadUserRole();
+  }, [web3, account]);
+
+  useEffect(() => {
+    // Clear or update localStorage when the account changes
+    localStorage.setItem('rideKoins', JSON.stringify(0));
+  }, [account]);
 
   const handleRegistration = async (registrationFunction) => {
     if (web3 && account) {
@@ -80,6 +100,9 @@ function Register() {
         const balance = await rydeContract.methods.getRideKoinBalance(account).call({from : account});
         console.log("account is", account);
         console.log("role is: ", role);
+        setUserRole(role);
+        console.log(typeof role); // Outputs: string
+
         if(role==2)
           navigate('/rider'); // Redirect to rider page or driver page based on role
         else if(role==1){
@@ -95,21 +118,34 @@ function Register() {
   };
 
   return (
-    <div className="register-container">
-      <button className="register-button" onClick={handleRiderRegister}>
-        <FaAddressCard />
-        <span>Register as Rider</span>
-      </button>
-      <button className="register-button" onClick={handleDriverRegister}>
-        <FaCarAlt />
-        <span>Register as Driver</span>
-      </button>
-      <button className="register-button" onClick={handleLogin}>
-        <FaLock />
-        <span>Login</span>
-      </button>
-    </div>
+      <div className="register-container">
+        {userRole.toString() === "0" && (
+            <>
+              <button className="register-button" onClick={handleRiderRegister}>
+                <FaAddressCard />
+                <span>Register as Rider</span>
+              </button>
+              <button className="register-button" onClick={handleDriverRegister}>
+                <FaCarAlt />
+                <span>Register as Driver</span>
+              </button>
+            </>
+        )}
+        {userRole.toString() !== "0" && (
+            <>
+              <div className="user-info">
+                <h2>{`Welcome, ${account}`}</h2>
+                <p>{userRole === 1 ? 'Role: Driver' : 'Role: Rider'}</p>
+              </div>
+              <button className="register-button" onClick={handleLogin}>
+                <FaLock />
+                <span>Login</span>
+              </button>
+            </>
+        )}
+      </div>
   );
+
 }
 
 export default Register;

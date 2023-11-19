@@ -3,7 +3,7 @@ import { FaStar } from 'react-icons/fa';
 import contractAbi from '../Rydeasset.json';
 import RydeAsset from 'contractsAbi/Rydeasset.json';
 import config from '../config/config'; // Adjust the path based on your file structure
-
+import XRPPasses from "../components/xrpPasses.json";
 import Web3 from "web3";
 
 const RiderDetail = ({ rider }) => {
@@ -11,7 +11,9 @@ const RiderDetail = ({ rider }) => {
     const [web3, setWeb3] = useState(null);
     const [account, setAccount] = useState('');
     const [fare, setFare] = useState(0); // State to store the entered fare
-
+    const [xrpPasses, setXrpPasses] = useState([]);
+    const [selectedXrpPassID, setSelectedXrpPassID] = useState('');
+    const [xrpId, setXrpId] = useState('');
 
     useEffect(() => {
 
@@ -47,19 +49,46 @@ const RiderDetail = ({ rider }) => {
         loadAccount();
     }, [web3]);
 
+
+    useEffect(() => {
+        const fetchXrpPasses = async () => {
+            const contract = new web3.eth.Contract(RydeAsset.abi, config.rydeAssetContractAddress);
+            const tokens = await contract.methods.getTokens(account).call({ from: account });
+
+            // Fetch descriptions and prices for each token
+            const passesWithDetails = await Promise.all(tokens.map(async (token) => {
+                const description = XRPPasses[token];
+                const price = await contract.methods.xclusivePassPrices(token).call({ from: account });
+                return {
+                    id: token,
+                    description,
+                    price,
+                };
+            }));
+
+            setXrpPasses(passesWithDetails);
+            console.log("passes", passesWithDetails);
+        };
+
+        if (web3 && account) {
+            fetchXrpPasses();
+        }
+    }, [web3, account]);
+
     const handleAcceptRide = async () => {
         const contractAddress = config.rydeAssetContractAddress;
         const rideAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
         try {
-            const xclusiveRydePassID = 0; // Set the xclusiveRydePassID here if applicable
-            await rideAssetContract.methods.acceptRideRequest(requestId, fare, xclusiveRydePassID).send({ from: account });
+            console.log("selected : ", selectedXrpPassID);
+            await rideAssetContract.methods.acceptRideRequest(requestId, fare, selectedXrpPassID).send({ from: account });
             alert("Ride accepted successfully!");
         } catch (error) {
             console.error('Error accepting ride:', error);
             alert("Failed to accept ride.");
         }
     };
+
 
     return (
         <div className="rider-detail">
@@ -80,8 +109,36 @@ const RiderDetail = ({ rider }) => {
                     placeholder="Enter Fare"
                     className="fare-input"
                     onChange={(e) => setFare(e.target.value)} // Update fare state on change
-                />                <div>
-                    Transfer XRP: <input type="checkbox" />
+                />
+                <div>
+                    <div>
+                        Transfer XRP:
+                        <select
+                            onChange={(e) => {
+                                const selectedId = e.target.value;
+                                console.log("Selected ID: ", selectedId);
+                                console.log("Available passes: ", xrpPasses);
+
+                                // Ensure you're comparing the same type. Convert both to strings if necessary.
+                                const selectedPass = xrpPasses.find((pass) => pass.id.toString() === selectedId.toString());
+                                setSelectedXrpPassID(selectedId); // Store the ID
+
+                                if (selectedPass) {
+                                    console.log("Selected XRP Pass Description: ", selectedPass.description);
+                                    setSelectedXrpPassID(selectedId); // Store the ID
+                                } else {
+                                    console.log("No matching XRP Pass found for ID: ", selectedId);
+                                }
+                            }}
+                        >
+                            <option value="">Select XRP Pass</option>
+                            {xrpPasses.map((xrpPass) => (
+                                <option key={xrpPass.id} value={xrpPass.id.toString()}>
+                                    {xrpPass.description}
+                                </option>
+                            ))}
+                        </select>
+                    </div>
                 </div>
                 <button onClick={handleAcceptRide} className="accept-button">Accept</button>
             </div>

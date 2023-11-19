@@ -3,17 +3,20 @@ import { FaStar } from 'react-icons/fa';
 import RydeAsset from 'contractsAbi/Rydeasset.json';
 import Web3 from "web3";
 import config from '../config/config'; // Adjust the path based on your file structure
-
+import { useRideKoin } from '../pages/RideKoinContext'; // Adjust the path
+import './DriverDetails.css'
+import XRPPasses from "../components/xrpPasses.json";
 const DriverDetail = ({ driver }) => {
-    const { name, carModel, carLicense, distance, fare, xrp, profilePic, acceptRequestId } = driver;
+    const { name, model, carLicense, distance, fare, xrpId,  acceptRequestId, photos } = driver;
 
     const [web3, setWeb3] = useState(null);
     const [account, setAccount] = useState('');
+    const { setRideKoins } = useRideKoin();
 
     const starRating = 5; // Hardcoded for now, adjust as necessary
-    console.log("name, carModel, carLicense, distance, estimatedFare, xrpOption, profilePic", name, carModel, carLicense, distance, fare, xrp, profilePic);
-    console.log("fare:  ", fare);
-    console.log("AcceptReqId", acceptRequestId);
+    // console.log("name, carModel, carLicense, distance, estimatedFare, xrpOption, profilePic", name, carModel, carLicense, distance, fare, xrp, profilePic);
+    // console.log("fare:  ", fare);
+    // console.log("AcceptReqId", acceptRequestId);
 
     useEffect(() => {
         console.log("DriverDetail props updated", driver);
@@ -61,7 +64,11 @@ const DriverDetail = ({ driver }) => {
 
         try {
             await contract.methods.bookRide(acceptRequestId).send({ from: account });
+
             alert("Ride booked successfully!");
+            const newBalance = await contract.methods.getRideKoinBalance(account).call({from: account});
+            console.log("Balance: ", newBalance);
+            setRideKoins(newBalance);
             // Update the UI or state as necessary
         } catch (error) {
             console.error('Error booking ride:', error);
@@ -72,9 +79,9 @@ const DriverDetail = ({ driver }) => {
     return (
         <div className="driver-detail">
             <div className="driver-profile">
-                <img src={profilePic} alt={name} className="profile-photo" />
+                <img src={photos} alt={name} className="profile-photo" />
                 <div>{name}</div>
-                <div>{carModel} ({carLicense})</div>
+                <div>{model} ({carLicense})</div>
             </div>
             <div className="driver-info">
                 <div className="driver-stars">
@@ -83,7 +90,7 @@ const DriverDetail = ({ driver }) => {
                     ))}
                 </div>
                 <div>{distance}</div>
-                <div>Estimated Fare: {fare.toString()} RDK {xrp.toString() && 'or 1 XRP'}</div>
+                <div>Estimated Fare: {fare.toString()} RDK XRP: { XRPPasses[xrpId] }</div>
                 <button onClick={() => handleBookRide(acceptRequestId)}>Book Now</button>
             </div>
         </div>
