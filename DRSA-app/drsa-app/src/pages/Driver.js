@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
-import RydeAsset from '../Rydeasset.json';
-
+import RydeAsset from 'contractsAbi/Rydeasset.json';
 import '../App.css';
 import { FaSpinner } from 'react-icons/fa'; // For the spinner icon
 import Modal from 'react-modal'; // Install react-modal if not already installed
 import RiderDetail from '../components/RiderDetails'; // The new component created above
 import './Driver.css'
 import userNames from "../components/users.json";
+import config from '../config/config'; // Adjust the path based on your file structure
 
 const customStyles = {
     content: {
@@ -53,12 +53,13 @@ const DriverScreen = () => {
 
         // Call the smart contract function after the spinner
         try {
-            const contractAddress = "0xb1692d63D4BB8E780295f96bEdfD5ee54f929B66"; // Your deployed RydeAsset contract address
+            const contractAddress = config.rydeAssetContractAddress; // Your deployed RydeAsset contract address
             const rideAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
             const requests = await rideAssetContract.methods.viewRideRequests().call({from: account});
             console.log("requests", requests);
             // Process the requests
             const processedRequests = requests.map((request, index) => {
+                console.log("request : ", request)
                 // Replace with your actual mapping from address to name
                 const riderName = userNames[request[0]]; // Placeholder for actual name mapping
                 return {
@@ -66,7 +67,8 @@ const DriverScreen = () => {
                     dropLocation: request[2],
                     stars: 4, // hardcoded for now
                     distance: '2 mins', // hardcoded for now
-                    profilePic: '/path/to/image' // placeholder or fetch from your mapping
+                    profilePic: '/path/to/image', // placeholder or fetch from your mapping
+                    requestId: request[3]
                 };
             });
 
@@ -125,7 +127,7 @@ const DriverScreen = () => {
 
     const getRideKoinBalance = async (web3, account) => {
         // Replace with your contract ABI and address
-        const contractAddress =  "0xD5d3Ce14A8EE4F1ca6732208dB070F77DFB6b75f"/* The address of your deployed RydeAsset contract */;
+        const contractAddress =  config.rydeAssetContractAddress/* The address of your deployed RydeAsset contract */;
         const rideAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
         try {

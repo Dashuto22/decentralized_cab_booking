@@ -1,10 +1,12 @@
 import React, { useState, useEffect } from 'react';
 import { FaAddressCard, FaCarAlt, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
+import  RydeAsset  from 'contractsAbi/Rydeasset.json';
 import contractAbi from '../Rydeasset.json';
 import './Register.css'; // Assuming you have a CSS file for styling
 import { initializeWeb3 } from '../utils/web3'; // Adjust the path based on your actual folder structure
 import { useRideKoin } from './RideKoinContext';
+import config from '../config/config'; // Adjust the path based on your file structure
 
 function Register() {
   const [web3, setWeb3] = useState(null);
@@ -38,16 +40,11 @@ function Register() {
 
   const handleRegistration = async (registrationFunction) => {
     if (web3 && account) {
-      console.log("here as well");
+      const contractAddress = config.rydeAssetContractAddress;
+      const rydeContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
-      const contractAddress = '0x489794436375AE5D6FCcc6EfcB9c84744881437C';
-      const rydeContract = new web3.eth.Contract(contractAbi, contractAddress);
-
-      console.log("Heyy");
       try {
-        console.log("Whatty");
         await registrationFunction(rydeContract, account);
-        console.log("Whatt");
         const role = await rydeContract.methods.getUserRole(account).call({ from: account });
         console.log('Registered successfully');
         console.log("account is", account);
@@ -60,7 +57,6 @@ function Register() {
   };
 
   const handleRiderRegister = () => {
-    console.log("here!")
     handleRegistration(async (rydeContract, account) => {
       await rydeContract.methods.registerAsRider().send({ from: account });
       navigate('/rider'); // Redirect to rider page or driver page based on role
@@ -76,8 +72,8 @@ function Register() {
 
   const handleLogin = async () => {
     if (web3 && account) {
-      const contractAddress = '0x489794436375AE5D6FCcc6EfcB9c84744881437C';
-      const rydeContract = new web3.eth.Contract(contractAbi, contractAddress);
+      const contractAddress = config.rydeAssetContractAddress;
+      const rydeContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
       try {
         const role = await rydeContract.methods.getUserRole(account).call({ from: account });
@@ -86,7 +82,7 @@ function Register() {
         console.log("role is: ", role);
         if(role==2)
           navigate('/rider'); // Redirect to rider page or driver page based on role
-        else{
+        else if(role==1){
           navigate('/driver');
         }
         setRideKoins(previousKoins => previousKoins + parseInt(balance));

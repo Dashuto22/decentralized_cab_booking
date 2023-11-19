@@ -5,6 +5,7 @@ import rydepassAbi from '../XclusiveRydepass.json';
 
 import './AssetManagement.css'; // Import the CSS file
 import { useRideKoin } from './RideKoinContext';
+import config from '../config/config'; // Adjust the path based on your file structure
 
 
 function AssetManagement() {
@@ -54,10 +55,7 @@ function AssetManagement() {
 
     const handleBuyRideKoin = async () => {
         try {
-
-
-            const contractAddress = '0x489794436375AE5D6FCcc6EfcB9c84744881437C';
-
+            const contractAddress = config.rydeAssetContractAddress;
             const contractInstance = new web3.eth.Contract(contractAbi, contractAddress);
             setContractInstance(contractInstance);
 
@@ -96,7 +94,7 @@ function AssetManagement() {
     };
     
     const handleCreateRideAsset = () => { /* logic */ };
-    
+
 
     const handleSendRideKoin = async () => {
         const contractAddress = '0x489794436375AE5D6FCcc6EfcB9c84744881437C';
@@ -131,10 +129,10 @@ function AssetManagement() {
                 //const passId = parseInt(XRTPassid, 10); // assuming passId is an integer
                 const receiver = receiverAddress;
                 console.log("receiver ", receiver)
-    
+
                 // Call the smart contract function
                 await contractInstance.methods.transferToken(receiver,account, passId).send({ from: account });
-    
+
                 console.log(`Transaction successful for transferring Xclusive Ryde Pass with ID ${passId} to ${receiver}`);
             } else {
                 console.error('Contract instance not available');
@@ -143,7 +141,7 @@ function AssetManagement() {
             console.error('Error in transferXclusiveRydePass call:', error);
         }
     };
-    
+
     const handleSendRideAsset = () => { /* logic */ };
 
     return (
