@@ -1,20 +1,16 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.20;
 
-
-
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RideKoin.sol";
-import "./XclusiveRydepass.sol";
-
+import "./XclusiveRydePass.sol";
 
 contract RydeAsset is ERC1155, Ownable {
     uint256 public MINT_PRICE = 10 wei;
 
     RideKoin public rideKoinContract;
     XclusiveRydePass public xclusiveRydePassContract;
-
 
     enum UserRole { None, Driver, Rider }
     mapping(address => UserRole) public userRoles;
@@ -52,8 +48,6 @@ contract RydeAsset is ERC1155, Ownable {
     mapping(address => ConfirmedRide[]) public confirmedRides;
     mapping(uint256 => uint256) public xclusivePassPrices;
 
-
-
     constructor(address _rideKoinContractAddress, address _xclusiveRydePassContractAddress)
         ERC1155("abcdce")
             Ownable(msg.sender)
@@ -75,79 +69,7 @@ contract RydeAsset is ERC1155, Ownable {
     function getUserRole(address a) public view returns (UserRole){
         return userRoles[a];
     }
-
-    function mintXclusiveRydePass(address to) public payable {
-        xclusiveRydePassContract.safeMint{value: msg.value}(to);
-    }
-
-
-    function transferRideKoins(address from, address to, uint256 value) public {
-    require(value > 0, "Value must be greater than 0");
-    require(rideKoinContract._balanceOf(from) >= value, "Insufficient RideKoin balance");
-    rideKoinContract.transferRidekoins(from, to, value);
-
-}
-
-    function transferXclusiveRydePass(address from, address to, uint256 tokenId) public {
-        xclusiveRydePassContract.transferFrom(from, to, tokenId);
-    }
-
-    function getTokens(address owner) public view returns (uint256[] memory) {
-        return xclusiveRydePassContract.getTokens(owner);
-    }
-
-    function buyRideKoin(uint256 tokenAmount) public payable {
-        rideKoinContract.buyToken{value: msg.value}(tokenAmount);
-        rideKoinContract.transfer(msg.sender, tokenAmount);
-    }
-
-
-    function getRideKoinBalance(address user) public view returns (uint256) {
-        return rideKoinContract._balanceOf(user);
-    }
-
-    function getXclusiveRydePassCount(address user) public view returns (uint256) {
-        return xclusiveRydePassContract.balanceOf(user);
-    }
-
-
-
-    function setXclusivePassPrice(uint256 xclusiveRydePassID, uint256 price) external {
-        require(xclusiveRydePassContract.ownerOf(xclusiveRydePassID) == msg.sender, "You don't own the specified XclusiveRydePass");
-        xclusivePassPrices[xclusiveRydePassID] = price;
-    }
-
-    function mintBatchXclusiveRydePass(address[] memory to) public payable {
-        require(msg.value == MINT_PRICE * to.length, "Incorrect amount of Ether sent");
-
-        for (uint256 i = 0; i < to.length; i++) {
-            xclusiveRydePassContract.safeMint{value: MINT_PRICE}(to[i]);
-        }
-    }
-
-    function transferBatch(address from, address[] memory to, uint256[] memory tokenId) public {
-        require(to.length == tokenId.length, "Array length mismatch");
-
-        uint256[] memory amounts = new uint256[](to.length);
-        for (uint256 i = 0; i < to.length; i++) {
-            amounts[i] = 1; // You can customize the amounts if needed
-
-        safeBatchTransferFrom(from, to[i], tokenId, amounts, "");
-        }
-
-        //safeBatchTransferFrom(from, to, tokenId, amounts, "");
-    }
-
-
-
-    function transferBatchXclusiveRydePass(address from, address[] memory to, uint256[] memory tokenId) public {
-        require(to.length == tokenId.length, "Array length mismatch");
-
-        for (uint256 i = 0; i < to.length; i++) {
-            xclusiveRydePassContract.transferFrom(from, to[i], tokenId[i]);
-        }
-    }
-
+        
     function createRideRequest(string memory fromLocation, string memory toLocation) public {
         require(userRoles[msg.sender] == UserRole.Rider, "Only riders can create requests");
         rideRequests[currentRequestId] = RideRequest({
@@ -167,8 +89,6 @@ contract RydeAsset is ERC1155, Ownable {
         }
         return requests;
     }
-
-
 
     function acceptRideRequest(uint256 requestId, uint256 fare, uint256 xrpID ) public {
         require(userRoles[msg.sender] == UserRole.Driver, "Only drivers can accept requests");
@@ -238,7 +158,4 @@ contract RydeAsset is ERC1155, Ownable {
     function getConfirmedRidesForDriver(address driver) public view returns (ConfirmedRide[] memory) {
         return confirmedRides[driver];
     }
-
-
-
 }

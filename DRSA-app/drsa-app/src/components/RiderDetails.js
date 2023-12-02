@@ -81,7 +81,11 @@ const RiderDetail = ({ rider }) => {
 
         try {
             console.log("selected : ", selectedXrpPassID);
-            await rideAssetContract.methods.acceptRideRequest(requestId, fare, selectedXrpPassID).send({ from: account });
+            if(selectedXrpPassID==""){
+                await rideAssetContract.methods.acceptRideRequest(requestId, fare, 999).send({ from: account });
+            }else{
+                await rideAssetContract.methods.acceptRideRequest(requestId, fare, selectedXrpPassID).send({ from: account });
+            }
             alert("Ride accepted successfully!");
         } catch (error) {
             console.error('Error accepting ride:', error);
@@ -116,22 +120,22 @@ const RiderDetail = ({ rider }) => {
                         <select
                             onChange={(e) => {
                                 const selectedId = e.target.value;
-                                console.log("Selected ID: ", selectedId);
-                                console.log("Available passes: ", xrpPasses);
-
-                                // Ensure you're comparing the same type. Convert both to strings if necessary.
-                                const selectedPass = xrpPasses.find((pass) => pass.id.toString() === selectedId.toString());
-                                setSelectedXrpPassID(selectedId); // Store the ID
-
-                                if (selectedPass) {
-                                    console.log("Selected XRP Pass Description: ", selectedPass.description);
-                                    setSelectedXrpPassID(selectedId); // Store the ID
+                                if (selectedId === '-1') {
+                                    setSelectedXrpPassID(-1);
+                                    console.log("No XRP selected");
                                 } else {
-                                    console.log("No matching XRP Pass found for ID: ", selectedId);
+                                    const selectedPass = xrpPasses.find((pass) => pass.id.toString() === selectedId);
+                                    setSelectedXrpPassID(selectedId); // Store the ID
+
+                                    if (selectedPass) {
+                                        console.log("Selected XRP Pass Description: ", selectedPass.description);
+                                    } else {
+                                        console.log("No matching XRP Pass found for ID: ", selectedId);
+                                    }
                                 }
                             }}
                         >
-                            <option value="">Select XRP Pass</option>
+                            <option value="999">Select XRP Pass</option>
                             {xrpPasses.map((xrpPass) => (
                                 <option key={xrpPass.id} value={xrpPass.id.toString()}>
                                     {xrpPass.description}

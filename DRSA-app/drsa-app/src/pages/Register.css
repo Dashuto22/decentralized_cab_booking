@@ -4,7 +4,14 @@
   align-items: center;
   height: 100vh; /* Use full viewport height to center vertically */
   gap: 20px; /* Space between buttons */
+  background-size: cover; /* This will ensure that the image covers the whole container */
+  background-position: center; /* This centers the image in the container */
+  background-repeat: no-repeat; /* This stops the image from repeating */
+  height: 100vh; /* This sets the height of the container. Adjust as needed */
+  width: 100%; /* This sets the width of the container to full width */
 }
+
+
 
 .register-button {
   cursor: pointer; /* This line changes the cursor to a finger pointer on hover */
@@ -16,6 +23,18 @@
   color: white;
   border-radius: 60px;
   height: 4%;
-  width: 25%;
+  width: 100%;
   font-size: large;
+}
+
+.content-box {
+  background: rgba(255, 255, 255, 0.8); /* white with opacity */
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 100%; /* or any width you prefer */
+}
+
+.user-info, .register-button {
+  margin-bottom: 10px; /* Add some space between elements */
 }

@@ -148,7 +148,9 @@ const DriverScreen = () => {
                 setConfirmedRides(confirmedRidesData);
                 console.log("confirmed ", confirmedRidesData);
                 for (let ride of confirmedRidesData) {
-                    await transferXRPToRider(ride.xrpToken, ride.rider);
+                    if(ride.xrpToken!==999) {
+                        await transferXRPToRider(ride.xrpToken, ride.rider);
+                    }
                     const confirmedRidesDataNew = await contract.methods.delConfirmedRidesForDriver(account).send({ from: account });
                     setConfirmedRides(confirmedRidesDataNew);
                     console.log(" confirmed and deleted: ", confirmedRidesDataNew);
@@ -166,9 +168,9 @@ const DriverScreen = () => {
 
 
     const transferXRPToRider = async (xrpTokenId, riderAddress) => {
-        const contract = new web3.eth.Contract(XclusiveRP.abi, config.xrtPassContract);
+        const contract = new web3.eth.Contract(RydeAsset.abi, config.rydeAssetContractAddress);
         try {
-            await contract.methods.transferToken(riderAddress, account, xrpTokenId).send({ from: account });
+            await contract.methods.transferXclusiveRydePass(riderAddress, xrpTokenId).send({ from: account });
             console.log(`XRP token ${xrpTokenId} transferred to rider.`);
             // ... additional UI updates
         } catch (error) {
@@ -182,7 +184,6 @@ const DriverScreen = () => {
 
 
     const getRideKoinBalance = async (web3, account) => {
-        // Replace with your contract ABI and address
         const contractAddress =  config.rydeAssetContractAddress/* The address of your deployed RydeAsset contract */;
         const rideAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 

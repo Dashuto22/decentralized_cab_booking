@@ -27,20 +27,19 @@ contract XclusiveRydePass is ERC721, ERC721Enumerable, ERC721Pausable, Ownable, 
     function _baseURI() internal pure override returns (string memory) {
         return "ipfs://xclusiveRydePassBaseURI/";
     }
-    
 
-    function getTokens(address owner) public view returns (uint256[] memory) {
-            require(owner == owner|| owner == msg.sender, "Only the owner or the associated account can check token ids");
-            return tokenOwnerstoIds[owner];
+
+    function getTokens(address user) public view returns (uint256[] memory) {
+        return tokenOwnerstoIds[user];
     }
 
     function getOwnerOfToken(uint256 tokenId) public view returns (address) {
         return ownerOf(tokenId);
     }
 
-    function transferToken(address to, address from, uint256 tokenId) public onlyOwnerOf(tokenId) {
-        _transfer(from, to, tokenId);
-        uint256[] storage ownerTokenIds = tokenOwnerstoIds[from];
+    function transferToken(address to, uint256 tokenId) public onlyOwnerOf(tokenId) {
+        _transfer(ownerOf(tokenId), to, tokenId);
+        uint256[] storage ownerTokenIds = tokenOwnerstoIds[ownerOf(tokenId)];
         for (uint256 i = 0; i < ownerTokenIds.length; i++) {
             if (ownerTokenIds[i] == tokenId) {
                 // Remove the transferred token from the owner's list of tokens
@@ -104,6 +103,20 @@ contract XclusiveRydePass is ERC721, ERC721Enumerable, ERC721Pausable, Ownable, 
 
     function approveAddressForToken(address to, uint256 tokenId) public onlyOwnerOf(tokenId) {
         approve(to, tokenId);
+    }
+
+    function _transferToken(address to, uint256 tokenId)  external {
+        uint256[] storage ownerTokenIds = tokenOwnerstoIds[ownerOf(tokenId)];
+        _transfer(ownerOf(tokenId), to, tokenId);
+        for (uint256 i = 0; i < ownerTokenIds.length; i++) {
+            if (ownerTokenIds[i] == tokenId) {
+                // Remove the transferred token from the owner's list of tokens
+                ownerTokenIds[i] = ownerTokenIds[ownerTokenIds.length - 1];
+                ownerTokenIds.pop();
+                break;
+            }
+        }
+        tokenOwnerstoIds[to].push(tokenId);
     }
 
     

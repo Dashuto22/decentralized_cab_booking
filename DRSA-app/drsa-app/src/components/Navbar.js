@@ -21,7 +21,7 @@ function Navbar() {
     const [userName, setUserName] = useState("Timothy");
     const [web3, setWeb3] = useState(null);
     const [account, setAccount] = useState('');
-    // const [rideKoins, setRideKoins] = useState(0);
+    const [rideKoin, setRideKoins] = useState(0);
     const [xrpPasses, setXrpPasses] = useState(0);
     const {rideKoins} = useRideKoin();
 
@@ -55,21 +55,20 @@ function Navbar() {
     }, [web3]);
 
 
-    // useEffect(() => {
-    //     Fetch RideKoins and XRP Passes balances
-    //     const loadBalances = async () => {
-    //         if (web3 && account) {
-    //             const contractAddress = '0x65Bb7490e32Bd4b035C047dAF4b62b59fD39e521';
-    //             const contract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
-    //             const rideKoinsBalance = await contract.methods.getRideKoinBalance(account).call({from : account});
-    //             const xrpPassesBalance = await contract.methods.getXclusiveRydePassCount(account).call({from : account});
-    //             setRideKoins(rideKoinsBalance);
-    //             console.log(rideKoins)
-    //             setXrpPasses(xrpPassesBalance);
-    //         }
-    //     };
-    //     loadBalances();
-    // }, []);
+    useEffect(() => {
+        const loadBalances = async () => {
+            if (web3 && account) {
+                const contractAddress = config.rydeAssetContractAddress;
+                const contract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
+                const rideKoinsBalance = await contract.methods.getRideKoinBalance(account).call({from : account});
+                const xrpPassesBalance = await contract.methods.getXclusiveRydePassCount(account).call({from : account});
+                setRideKoins(rideKoinsBalance);
+                console.log(rideKoins)
+                setXrpPasses(xrpPassesBalance);
+            }
+        };
+        loadBalances();
+    }, []);
     const showSidebar = () => setSidebar(!sidebar);
 
     // Dummy data for demonstration
@@ -80,10 +79,17 @@ function Navbar() {
         <div>
             <IconContext.Provider value={{ color: '#fff' }}>
                 <div className='navbar'>
-                    DRSA
-                    <Link to="#" className='menu-bars'>
-                        <FaIcons.FaBars onClick={showSidebar}/>
-                    </Link>
+                    <div className='navbar-left'>
+                        <Link to="#" className='menu-bars'>
+                            <FaIcons.FaBars onClick={showSidebar}/>
+                        </Link>
+                    </div>
+                    <div className='navbar-center'>
+                        <h1>Welcome to DRSA</h1>
+                    </div>
+                    <div className='navbar-right'>
+                        <img src='/assets/drsa-logo.png' alt='DRSA Logo' className='navbar-logo' />
+                    </div>
                 </div>
                 <nav className={sidebar ? 'nav-menu active' : 'nav-menu'}>
                     <ul className='nav-menu-items' onClick={showSidebar}>

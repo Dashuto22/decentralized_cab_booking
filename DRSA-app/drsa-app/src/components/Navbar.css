@@ -1,9 +1,12 @@
 .navbar {
-    background-color: #060b26;
+    /*background-color: #060b26;*/
     height: 80px;
     display: flex;
-    justify-content: start;
     align-items: center;
+    justify-content: space-between;
+    background-color: #333;
+    color: white;
+    padding: 0 20px;
 }
 
 .menu-bars {
@@ -106,4 +109,9 @@ span {
     background-color: #2a2a2a; /* A background color that contrasts with the text */
     margin-top: 10px; /* Add some margin at the top */
     z-index: 10; /* Make sure it's not overlapped by other elements */
+}
+
+.navbar-logo {
+    height: 80px; /* adjust as necessary */
+    width: auto;
 }

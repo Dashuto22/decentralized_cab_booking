@@ -21,7 +21,7 @@ function AssetManagement() {
     const [createRideAsset, setCreateRideAsset] = useState('');
     const [sendRideKoin, setSendRideKoin] = useState('');
     const [sendXRTPasses, setSendXRTPasses] = useState('');
-    const [sendRideAsset, setSendRideAsset] = useState('');
+    const [sellXRP, setSellXRP] = useState('');
     const [receiverAddress, setReceiverAddress] = useState('');
     const [contractInstance, setContractInstance] = useState(null);
     const [userRole, setUserRole] = useState(null); // State to store user role
@@ -137,8 +137,8 @@ function AssetManagement() {
     };
 
     const handleSendXRTPasses = async () => {
-        const contractAddress = config.xrtPassContract;
-        const contractInstance = new web3.eth.Contract(RydePass.abi, contractAddress);
+        const contractAddress = config.rydeAssetContractAddress;
+        const contractInstance = new web3.eth.Contract(RydeAsset.abi, contractAddress);
         setContractInstance(contractInstance);
         try {
             if (contractInstance) {
@@ -150,7 +150,7 @@ function AssetManagement() {
                 console.log("receiver ", receiver)
 
                 // Call the smart contract function
-                await contractInstance.methods.transferToken(receiver,account, passId).send({ from: account });
+                await contractInstance.methods.transferXclusiveRydePass(receiver, passId).send({ from: account });
 
                 console.log(`Transaction successful for transferring Xclusive Ryde Pass with ID ${passId} to ${receiver}`);
             } else {
@@ -161,7 +161,18 @@ function AssetManagement() {
         }
     };
 
-    const handleSendRideAsset = () => { /* logic */ };
+    const handleSendRideAsset = async () => {
+
+        try {
+            const contractInstance = new web3.eth.Contract(RydeAsset.abi, config.rydeAssetContractAddress);
+            console.log(sellXRP, receiverAddress);
+            await contractInstance.methods.exchangeRydePass(account, receiverAddress, sellXRP).send({from: account});
+            alert(`Price for XRP Pass ID ${xrpPassIdToSetPrice} set to ${xrpPassPrice}`);
+        } catch (error) {
+            console.error('Error selling the XRP', error);
+            alert('Failed to sell.');
+        }
+    };
 
     const handleCreateXRPPass = async () => {
         if (userRole === 1) { // Check if user is a driver
@@ -227,12 +238,6 @@ function AssetManagement() {
             </div>
             <div className="card">
                 <div className="row">
-                    <input type="text" value={createRideAsset} onChange={(e) => setCreateRideAsset(e.target.value)} placeholder="Create RideAsset" />
-                    <button onClick={handleCreateRideAsset}>Create</button>
-                </div>
-            </div>
-            <div className="card">
-                <div className="row">
                     <input type="text" value={sendRideKoin} onChange={(e) => setSendRideKoin(e.target.value)} placeholder="Send RideKoin" />
                     <input type="text" value={receiverAddress} onChange={(e) => setReceiverAddress(e.target.value)} placeholder="Receiver's Address" />
                     <button onClick={handleSendRideKoin}>Send</button>
@@ -247,9 +252,9 @@ function AssetManagement() {
             </div>
             <div className="card">
                 <div className="row">
-                    <input type="text" value={sendRideAsset} onChange={(e) => setSendRideAsset(e.target.value)} placeholder="Send RideAsset" />
+                    <input type="text" value={sellXRP} onChange={(e) => setSellXRP(e.target.value)} placeholder="Sell XRP" />
                     <input type="text" value={receiverAddress} onChange={(e) => setReceiverAddress(e.target.value)} placeholder="Receiver's Address" />
-                    <button onClick={handleSendRideAsset}>Send</button>
+                    <button onClick={handleSendRideAsset}>Sell XRP</button>
                 </div>
             </div>
         </div>

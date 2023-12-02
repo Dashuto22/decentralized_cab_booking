@@ -118,7 +118,8 @@ function Register() {
   };
 
   return (
-      <div className="register-container">
+      <div className="register-container" style={{backgroundImage: `url("/assets/drsa-main.png")`, flex: 1}}>
+        <div className="content-box">
         {userRole.toString() === "0" && (
             <>
               <button className="register-button" onClick={handleRiderRegister}>
@@ -144,6 +145,8 @@ function Register() {
             </>
         )}
       </div>
+      </div>
+
   );
 
 }
