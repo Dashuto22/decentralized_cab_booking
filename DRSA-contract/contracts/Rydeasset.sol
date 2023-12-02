@@ -20,6 +20,7 @@ contract RydeAsset is ERC1155, Ownable {
         string fromLocation;
         string toLocation;
         uint requestId;
+        bool isAccepted;
     }
 
     struct AcceptedRide {
@@ -29,6 +30,7 @@ contract RydeAsset is ERC1155, Ownable {
         uint xrpID;
         uint requestId;
         uint acceptRequestId;
+        bool isAccepted;
     }
 
     struct ConfirmedRide {
@@ -69,14 +71,15 @@ contract RydeAsset is ERC1155, Ownable {
     function getUserRole(address a) public view returns (UserRole){
         return userRoles[a];
     }
-        
+
     function createRideRequest(string memory fromLocation, string memory toLocation) public {
         require(userRoles[msg.sender] == UserRole.Rider, "Only riders can create requests");
         rideRequests[currentRequestId] = RideRequest({
             rider: msg.sender,
             fromLocation: fromLocation,
             toLocation: toLocation,
-            requestId: currentRequestId
+            requestId: currentRequestId,
+            isAccepted : false
         });
         emit RideRequested(currentRequestId, msg.sender, fromLocation, toLocation);
         currentRequestId++;
@@ -85,7 +88,9 @@ contract RydeAsset is ERC1155, Ownable {
     function viewRideRequests() public view returns (RideRequest[] memory) {
         RideRequest[] memory requests = new RideRequest[](currentRequestId);
         for (uint i = 0; i < currentRequestId; i++) {
-            requests[i] = rideRequests[i];
+            if(rideRequests[i].isAccepted != true){
+                requests[i] = rideRequests[i];
+            }
         }
         return requests;
     }
@@ -102,7 +107,8 @@ contract RydeAsset is ERC1155, Ownable {
             fare: fare,
             xrpID : xrpID,
             requestId: requestId,
-            acceptRequestId: currentAcceptRequestId
+            acceptRequestId: currentAcceptRequestId,
+            isAccepted : false
         });
 
         // Store the request ID in the rider's accepted request IDs
@@ -118,7 +124,9 @@ contract RydeAsset is ERC1155, Ownable {
 
         for (uint256 i = 0; i < riderAcceptedRequestIds.length; i++) {
             uint256 requestId = riderAcceptedRequestIds[i];
-            riderAcceptedRides[i] = acceptedRides[requestId];
+            if(acceptedRides[requestId].isAccepted != true){
+                riderAcceptedRides[i] = acceptedRides[requestId];
+            }
         }
 
         return riderAcceptedRides;
@@ -143,12 +151,12 @@ contract RydeAsset is ERC1155, Ownable {
         for (uint256 i = 0; i < currentAcceptRequestId; i++) {
             uint256 requestId = acceptedRides[i].requestId;
             if(acceptedRides[acceptRequestId].requestId == requestId){
-                delete acceptedRides[i];
+                 acceptedRides[i].isAccepted = true;
             }
         }
         // Remove the request from rideRequests and acceptedRides
-        delete rideRequests[acceptedRides[acceptRequestId].requestId];
-        delete acceptedRides[acceptRequestId];
+         rideRequests[acceptedRides[acceptRequestId].requestId].isAccepted = true;
+         acceptedRides[acceptRequestId].isAccepted = true;
     }
 
     function delConfirmedRidesForDriver(address driver) public {
