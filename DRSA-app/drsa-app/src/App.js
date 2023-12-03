@@ -6,6 +6,7 @@ import { Routes } from "react-router-dom";
 import Register from './pages/Register';
 import RiderScreen from './pages/Rider';
 import DriverScreen from "./pages/Driver";
+import Admin from "./pages/Admin";
 import AssetManagement from "./pages/AssetManagement";
 import XRPPasses from "./pages/XRPPasses";
 import { RideKoinProvider } from './pages/RideKoinContext';
@@ -24,6 +25,7 @@ function App(){
       <Navbar/>
       <Routes>
         <Route path="/" element={<Register />} />
+        <Route path="/admin" element={<Admin />} />
         <Route path="/rider" element={<RiderScreen />} />
         <Route path="/driver" element={<DriverScreen />} />
         <Route path="/payment" element={<AssetManagement />} />
