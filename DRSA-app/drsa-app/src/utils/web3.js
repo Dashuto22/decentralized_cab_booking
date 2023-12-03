@@ -25,4 +25,4 @@ export const initializeWeb3 = async () => {
   }
 
   return web3Instance;
-};
+}

@@ -3,12 +3,14 @@ import * as FaIcons from 'react-icons/fa';
 import * as AiIcons from 'react-icons/ai';
 import { Link } from 'react-router-dom';
 import { SidebarData } from './SidebarData';
+import Transacx from 'contractsAbi/TransacX.json';
 import './Navbar.css';
 import { IconContext } from 'react-icons';
 import userNames from './users.json'; // Import the JSON file
 import { initializeWeb3 } from '../utils/web3'; // Adjust the path based on your actual folder structure
 import RydeAsset from '../Rydeasset.json';
 import { useRideKoin } from '../pages/RideKoinContext';
+import { useRidePass } from '../pages/RidePassContext';
 import config from '../config/config'; // Adjust the path based on your file structure
 
 
@@ -24,6 +26,7 @@ function Navbar() {
     const [rideKoin, setRideKoins] = useState(0);
     const [xrpPasses, setXrpPasses] = useState(0);
     const {rideKoins} = useRideKoin();
+    const {ridePass}  = useRidePass();
 
     useEffect(() => {
         // Initialize web3 and set the web3 instance
@@ -58,8 +61,8 @@ function Navbar() {
     useEffect(() => {
         const loadBalances = async () => {
             if (web3 && account) {
-                const contractAddress = config.rydeAssetContractAddress;
-                const contract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
+                const contractAddress = config.transacxContract;
+                const contract = new web3.eth.Contract(Transacx.abi, contractAddress);
                 const rideKoinsBalance = await contract.methods.getRideKoinBalance(account).call({from : account});
                 const xrpPassesBalance = await contract.methods.getXclusiveRydePassCount(account).call({from : account});
                 setRideKoins(rideKoinsBalance);
@@ -102,7 +105,7 @@ function Navbar() {
                             <img src='/assets/profile-pic.png' alt='Profile' className='profile-photo' />
                             <div className='info-box'>
                                 <div>RideKoins: {rideKoins}</div>
-                                <div>XRP Passes: {xrpPasses}</div>
+                                <div>XRP Passes: {ridePass}</div>
                             </div>
                         </div>
                         <div className='user-name'>

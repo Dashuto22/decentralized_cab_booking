@@ -9,6 +9,8 @@ import DriverScreen from "./pages/Driver";
 import AssetManagement from "./pages/AssetManagement";
 import XRPPasses from "./pages/XRPPasses";
 import { RideKoinProvider } from './pages/RideKoinContext';
+import { RidePassProvider } from './pages/RidePassContext';
+
 
 
 
@@ -17,6 +19,7 @@ import { RideKoinProvider } from './pages/RideKoinContext';
 function App(){
   return (
       <RideKoinProvider>
+        <RidePassProvider>
       <Router>
       <Navbar/>
       <Routes>
@@ -27,6 +30,7 @@ function App(){
         <Route path="/xrp" element={<XRPPasses />} />
       </Routes>
     </Router>
+    </RidePassProvider>
           </ RideKoinProvider>
           );
 }

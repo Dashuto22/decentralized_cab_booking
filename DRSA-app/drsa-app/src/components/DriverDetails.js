@@ -2,6 +2,7 @@ import {React, useEffect, useState} from 'react';
 import { FaStar } from 'react-icons/fa';
 import RydeAsset from 'contractsAbi/Rydeasset.json';
 import Web3 from "web3";
+import Transacx from 'contractsAbi/TransacX.json';
 import config from '../config/config'; // Adjust the path based on your file structure
 import { useRideKoin } from '../pages/RideKoinContext'; // Adjust the path
 import './DriverDetails.css'
@@ -62,11 +63,14 @@ const DriverDetail = ({ driver }) => {
         const contractAddress = config.rydeAssetContractAddress;
         const contract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
 
+        const transacAddress = config.transacxContract;
+        const transacxContract = new web3.eth.Contract(Transacx.abi, transacAddress);
+
         try {
             await contract.methods.bookRide(acceptRequestId).send({ from: account });
 
             alert("Ride booked successfully!");
-            const newBalance = await contract.methods.getRideKoinBalance(account).call({from: account});
+            const newBalance = await transacxContract.methods.getRideKoinBalance(account).call({from: account});
             console.log("Balance: ", newBalance);
             setRideKoins(newBalance);
             // Update the UI or state as necessary

@@ -2,10 +2,13 @@ import React, { useState, useEffect } from 'react';
 import { FaAddressCard, FaCarAlt, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
 import  RydeAsset  from 'contractsAbi/Rydeasset.json';
+import Transacx from 'contractsAbi/TransacX.json';
 import contractAbi from '../Rydeasset.json';
 import './Register.css'; // Assuming you have a CSS file for styling
 import { initializeWeb3 } from '../utils/web3'; // Adjust the path based on your actual folder structure
 import { useRideKoin } from './RideKoinContext';
+import { useRidePass } from './RidePassContext';
+
 import config from '../config/config'; // Adjust the path based on your file structure
 
 function Register() {
@@ -15,6 +18,8 @@ function Register() {
   const [userRole, setUserRole] = useState(0);
 
   const { setRideKoins } = useRideKoin();
+  const { setRidePass } = useRidePass();
+
 
   useEffect(() => {
     const loadWeb3 = async () => {
@@ -32,7 +37,9 @@ function Register() {
   useEffect(() => {
     const loadAccount = async () => {
       if (web3) {
+        console.log("acc");
         const accounts = await web3.eth.getAccounts();
+        console.log("acc1", accounts);
         setAccount(accounts[0]);
       }
     };
@@ -59,9 +66,13 @@ function Register() {
   }, [account]);
 
   const handleRegistration = async (registrationFunction) => {
+    console.log("here0");
     if (web3 && account) {
+      console.log(account);
       const contractAddress = config.rydeAssetContractAddress;
+      console.log("here1");
       const rydeContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
+      console.log("here2");
 
       try {
         await registrationFunction(rydeContract, account);
@@ -77,6 +88,7 @@ function Register() {
   };
 
   const handleRiderRegister = () => {
+    console.log("here: ");
     handleRegistration(async (rydeContract, account) => {
       await rydeContract.methods.registerAsRider().send({ from: account });
       navigate('/rider'); // Redirect to rider page or driver page based on role
@@ -94,10 +106,15 @@ function Register() {
     if (web3 && account) {
       const contractAddress = config.rydeAssetContractAddress;
       const rydeContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
+      const transacAddress = config.transacxContract;
+      const transacContract = new web3.eth.Contract(Transacx.abi, transacAddress);
+      
 
       try {
         const role = await rydeContract.methods.getUserRole(account).call({ from: account });
-        const balance = await rydeContract.methods.getRideKoinBalance(account).call({from : account});
+        const balance = await transacContract.methods.getRideKoinBalance(account).call({from : account});
+        const xrpBalance = await transacContract.methods.getXclusiveRydePassCount(account).call({from : account});
+
         console.log("account is", account);
         console.log("role is: ", role);
         setUserRole(role);
@@ -109,6 +126,9 @@ function Register() {
           navigate('/driver');
         }
         setRideKoins(previousKoins => previousKoins + parseInt(balance));
+        setRidePass(previousPass => previousPass + parseInt(xrpBalance));
+
+
 
       } catch (error) {
         console.error('Error registering:', error);

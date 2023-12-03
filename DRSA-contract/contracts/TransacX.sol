@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 //import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/token/ERC1155/ERC1155.sol";
 //import "https://github.com/OpenZeppelin/openzeppelin-contracts/blob/master/contracts/access/Ownable.sol";
 import "./RideKoin.sol";
-import "./XclusiveRydePass.sol";
+import "./XclusiveRydepass.sol";
 
 //import "@openzeppelin/contracts/token/ERC1155/extensions/ERC1155Enumerable.sol";
 
@@ -14,8 +14,7 @@ contract TransacX is ERC1155,  Ownable  {
     // Token IDs
     uint256 public constant RIDE_CREDITS = 1;
     uint256 public constant MEMBERSHIP_PASS = 2;
-    uint256 public constant SPECIAL_VOUCHER = 3;
-    uint256 private nextTokenID = 4;
+    uint256 private nextTokenID = 3;
 
     mapping(uint256 => uint256) public xclusivePassPrices;
 
@@ -77,31 +76,27 @@ contract TransacX is ERC1155,  Ownable  {
         _mint(to, RIDE_CREDITS, amount, "");
     }
 
-     
-
-    // Function to mint membership passes (non-fungible)
-    function mintMembershipPass(address to) public onlyOwner {
-        _mint(to, MEMBERSHIP_PASS, 1, "");
-    }
+    
 
 
-    // Function to mint special vouchers (can be fungible or non-fungible)
     function mintSpecialVoucher(address to, uint256 amount, bool isFungible) public onlyOwner {
-        uint256 tokenId = isFungible ? SPECIAL_VOUCHER : _getNextTokenID();
+        uint256 tokenId;
+        if (isFungible) {
+            tokenId = RIDE_CREDITS;
+        } else {
+            tokenId = _getNextTokenID();
+            amount = 1; // Ensure only one NFT is minted
+        }
         _mint(to, tokenId, amount, "");
     }
 
-    // Function to perform safe batch transfers
     function safeBatchTransfer(
-        address from,
-        address to,
-        uint256[] memory ids,
-        uint256[] memory amounts,
-        bytes memory data
-    )
-        public
-    {
-        _safeBatchTransferFrom(from, to, ids, amounts, data);
+    address to,
+    uint256[] memory ids,
+    uint256[] memory amounts,
+    bytes memory data
+    ) public {
+    _safeBatchTransferFrom(msg.sender, to, ids, amounts, data);
     }
 
     // Internal function to generate a new token ID for non-fungible vo
@@ -109,5 +104,46 @@ contract TransacX is ERC1155,  Ownable  {
     function _getNextTokenID() private  returns (uint256) {
         return nextTokenID++;
     }
+
+    function getUserTokens(address user) public view returns (uint256 rideCredits, uint256[] memory nftTokenIds) {
+        // Get the number of Ride Credits the user has
+        rideCredits = balanceOf(user, RIDE_CREDITS);
+
+        // Count how many NFTs the user has
+        uint256 nftCount = 0;
+        for (uint256 i = MEMBERSHIP_PASS; i < nextTokenID; i++) {
+            if (balanceOf(user, i) > 0) {
+                nftCount++;
+            }
+        }
+
+        // Collect the NFT token IDs
+        nftTokenIds = new uint256[](nftCount);
+        uint256 nftIndex = 0;
+        for (uint256 i = MEMBERSHIP_PASS; i < nextTokenID; i++) {
+            if (balanceOf(user, i) > 0) {
+                nftTokenIds[nftIndex] = i;
+                nftIndex++;
+            }
+        }
+
+        return (rideCredits, nftTokenIds);
+    }
+
+    function burnToken(address user, uint256 tokenId, uint256 amount) public {
+        require(balanceOf(user, tokenId) >= amount, "Insufficient token balance to burn");
+
+        if (tokenId == RIDE_CREDITS) {
+            // Burn Ride Credits (fungible token)
+            require(amount > 0, "Amount must be greater than 0 for fungible tokens");
+            _burn(user, tokenId, amount);
+        } else {
+            // Burn NFT (non-fungible token)
+            require(amount == 1, "Amount must be 1 for non-fungible tokens");
+            require(tokenId >= MEMBERSHIP_PASS && tokenId < nextTokenID, "Invalid NFT token ID");
+            _burn(user, tokenId, amount);
+    }
+    }
+
     
 }

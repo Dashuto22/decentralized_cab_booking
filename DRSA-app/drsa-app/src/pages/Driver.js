@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
 import RydeAsset from 'contractsAbi/Rydeasset.json';
 import XclusiveRP from 'contractsAbi/XclusiveRydePass.json';
+import Transacx from 'contractsAbi/TransacX.json';
 
 import '../App.css';
 import { FaSpinner } from 'react-icons/fa'; // For the spinner icon
@@ -168,7 +169,7 @@ const DriverScreen = () => {
 
 
     const transferXRPToRider = async (xrpTokenId, riderAddress) => {
-        const contract = new web3.eth.Contract(RydeAsset.abi, config.rydeAssetContractAddress);
+        const contract = new web3.eth.Contract(config.transacxContract, Transacx.abi);
         try {
             await contract.methods.transferXclusiveRydePass(riderAddress, xrpTokenId).send({ from: account });
             console.log(`XRP token ${xrpTokenId} transferred to rider.`);
@@ -184,8 +185,8 @@ const DriverScreen = () => {
 
 
     const getRideKoinBalance = async (web3, account) => {
-        const contractAddress =  config.rydeAssetContractAddress/* The address of your deployed RydeAsset contract */;
-        const rideAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
+        const contractAddress =  config.transacxContract/* The address of your deployed RydeAsset contract */;
+        const rideAssetContract = new web3.eth.Contract(Transacx.abi, contractAddress);
 
         try {
             // Call the getRideKoinBalance function
