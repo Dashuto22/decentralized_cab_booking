@@ -1,5 +1,5 @@
 const RydeAsset = artifacts.require("Rydeasset");
 
 module.exports = function (deployer) {
-    deployer.deploy(RydeAsset, "0x4Df5e33616Bf4726231CbaC3B67Daa03Fb99b822", "0x9E25cE60175bb0C2513C26269C15045eD19E03D5");
+    deployer.deploy(RydeAsset, "0xA3E280a47Df7ee8aF30A64DCE59BEFA43F465E27", "0x9C9163a92CFc7F58851332984d340E4E95396Afd");
 };

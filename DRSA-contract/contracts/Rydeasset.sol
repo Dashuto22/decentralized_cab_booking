@@ -4,7 +4,7 @@ pragma solidity ^0.8.20;
 import "@openzeppelin/contracts/token/ERC1155/ERC1155.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./RideKoin.sol";
-import "./XclusiveRydePass.sol";
+import "./XclusiveRydepass.sol";
 
 contract RydeAsset is ERC1155, Ownable {
     uint256 public MINT_PRICE = 10 wei;
@@ -21,6 +21,7 @@ contract RydeAsset is ERC1155, Ownable {
         string toLocation;
         uint requestId;
         bool isAccepted;
+
     }
 
     struct AcceptedRide {
@@ -31,6 +32,7 @@ contract RydeAsset is ERC1155, Ownable {
         uint requestId;
         uint acceptRequestId;
         bool isAccepted;
+
     }
 
     struct ConfirmedRide {
@@ -71,7 +73,7 @@ contract RydeAsset is ERC1155, Ownable {
     function getUserRole(address a) public view returns (UserRole){
         return userRoles[a];
     }
-
+        
     function createRideRequest(string memory fromLocation, string memory toLocation) public {
         require(userRoles[msg.sender] == UserRole.Rider, "Only riders can create requests");
         rideRequests[currentRequestId] = RideRequest({
@@ -80,6 +82,7 @@ contract RydeAsset is ERC1155, Ownable {
             toLocation: toLocation,
             requestId: currentRequestId,
             isAccepted : false
+
         });
         emit RideRequested(currentRequestId, msg.sender, fromLocation, toLocation);
         currentRequestId++;
@@ -109,6 +112,7 @@ contract RydeAsset is ERC1155, Ownable {
             requestId: requestId,
             acceptRequestId: currentAcceptRequestId,
             isAccepted : false
+
         });
 
         // Store the request ID in the rider's accepted request IDs
@@ -151,12 +155,12 @@ contract RydeAsset is ERC1155, Ownable {
         for (uint256 i = 0; i < currentAcceptRequestId; i++) {
             uint256 requestId = acceptedRides[i].requestId;
             if(acceptedRides[acceptRequestId].requestId == requestId){
-                 acceptedRides[i].isAccepted = true;
+                acceptedRides[i].isAccepted = true;
+
             }
         }
-        // Remove the request from rideRequests and acceptedRides
-         rideRequests[acceptedRides[acceptRequestId].requestId].isAccepted = true;
-         acceptedRides[acceptRequestId].isAccepted = true;
+        rideRequests[acceptedRides[acceptRequestId].requestId].isAccepted = true;
+        acceptedRides[acceptRequestId].isAccepted = true;
     }
 
     function delConfirmedRidesForDriver(address driver) public {

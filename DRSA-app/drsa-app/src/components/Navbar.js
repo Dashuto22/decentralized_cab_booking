@@ -67,6 +67,7 @@ function Navbar() {
                 const xrpPassesBalance = await contract.methods.getXclusiveRydePassCount(account).call({from : account});
                 setRideKoins(rideKoinsBalance);
                 console.log(rideKoins)
+                console.log("XRP COunt: ", xrpPassesBalance )
                 setXrpPasses(xrpPassesBalance);
             }
         };

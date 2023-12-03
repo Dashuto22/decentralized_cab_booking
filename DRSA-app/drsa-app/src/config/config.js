@@ -1,8 +1,9 @@
 const config = {
-    rydeAssetContractAddress: "0x994BE9ef913B611157fd76991bf1b4efABB3C47c",
-    xrtPassContract: "0x9E25cE60175bb0C2513C26269C15045eD19E03D5",
-    transacxContract: "0xd32fD1dE4025f88F5cbe5DA315558B93CFbe2b89"
+    rydeAssetContractAddress: "0x4Cd0234d8f6d44d514d63440598Ec42B1a68524B",
+    xrtPassContract: "0x9C9163a92CFc7F58851332984d340E4E95396Afd",
+    transacxContract: "0x725fE4f5bF1f4F6B6bb5b95faC4a8569588a2b31"
     // Add other configuration details here
+
 };
 
 export default config;

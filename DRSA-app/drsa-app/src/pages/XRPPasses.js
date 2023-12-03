@@ -3,6 +3,7 @@ import xrpPassDescriptions from '../components/xrpPasses.json'; // Adjust the pa
 import './XRPPasses.css'; // CSS file for styling the cards
 import RydeAsset from 'contractsAbi/Rydeasset.json';
 import config from "../config/config";
+import Transacx from 'contractsAbi/TransacX.json';
 import Web3 from "web3";
 
 const XRPPasses = () => {
@@ -46,6 +47,7 @@ const XRPPasses = () => {
 
     useEffect(() => {
         if (web3 && account) {
+            console.log("blala")
             fetchXrpPasses();
         }
     }, [web3, account]);
@@ -57,8 +59,8 @@ const XRPPasses = () => {
             return;
         }
 
-        const contractAddress = config.rydeAssetContractAddress/* The address of your deployed RydeAsset contract */;
-        const rydeAssetContract = new web3.eth.Contract(RydeAsset.abi, contractAddress);
+        const contractAddress = config.transacxContract/* The address of your deployed RydeAsset contract */;
+        const rydeAssetContract = new web3.eth.Contract(Transacx.abi, contractAddress);
 
         const passCount = await rydeAssetContract.methods.getXclusiveRydePassCount(account).call({from:account});
         const passes = [];
@@ -68,7 +70,7 @@ const XRPPasses = () => {
             const price = await rydeAssetContract.methods.xclusivePassPrices(tokenId).call({from:account});
             passes.push({ id: tokenId, price, description: xrpPassDescriptions[tokenId.toString()] });
         }
-        console.log(passes);
+        console.log("passes", passes);
         setXrpPasses(passes);
     };
 

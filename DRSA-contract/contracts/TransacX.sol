@@ -46,8 +46,8 @@ contract TransacX is ERC1155,  Ownable  {
 
 }
 
-    function transferXclusiveRydePass(address from, address to, uint256 tokenId) public {
-        xclusiveRydePassContract.transferFrom(from, to, tokenId);
+    function transferXclusiveRydePass(address to, uint256 tokenId) public {
+        xclusiveRydePassContract._transferToken(to, tokenId);
     }
 
     function getTokens(address owner) public view returns (uint256[] memory) {

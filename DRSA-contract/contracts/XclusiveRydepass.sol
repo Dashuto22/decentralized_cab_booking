@@ -105,7 +105,7 @@ contract XclusiveRydePass is ERC721, ERC721Enumerable, ERC721Pausable, Ownable, 
         approve(to, tokenId);
     }
 
-    function _transferToken(address to, uint256 tokenId)  external {
+    function _transferToken(address to, uint256 tokenId)  external payable  {
         uint256[] storage ownerTokenIds = tokenOwnerstoIds[ownerOf(tokenId)];
         _transfer(ownerOf(tokenId), to, tokenId);
         for (uint256 i = 0; i < ownerTokenIds.length; i++) {

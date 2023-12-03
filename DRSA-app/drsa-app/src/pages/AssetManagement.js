@@ -9,7 +9,6 @@ import { useRideKoin } from './RideKoinContext';
 import { useRidePass } from './RidePassContext';
 import config from '../config/config'; // Adjust the path based on your file structure
 
-
 function AssetManagement() {
     // State for each input and the receiver's address
     const { setRideKoins } = useRideKoin();
@@ -235,12 +234,16 @@ function AssetManagement() {
             // Ensure the user is connected to MetaMask or another Ethereum provider
 
             // Call the smart contract function
+            console.log("toAddress", toAddress);
+            console.log("ids", ids);
+            console.log("amounts", amounts);
+            console.log("transferdata", transferData);
             
             const transfer = await contractInstance.methods.safeBatchTransfer(
                 toAddress,
                 ids,
                 amounts,
-                web3.utils.utf8ToHex(transferData) // Convert transferData to hex if needed
+                transferData // Convert transferData to hex if needed
             ).send({ from: account });
 
             console.log('batch transfer done:', transfer);
