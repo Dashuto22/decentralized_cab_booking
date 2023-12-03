@@ -59,9 +59,9 @@ const AdminPage = () => {
             }
     
             // Mint NFTs
-            // for (let i = 3; i < nftToMint; i++) {
-            //     await contract.methods.mintSpecialVoucher(accounts[0], i, false).send({ from: accounts[0] });
-            // }
+            for (let i = 0; i < nftToMint; i++) {
+                await contract.methods.mintSpecialVoucher(accounts[0], i, false).send({ from: accounts[0] });
+            }
     
             alert('Tokens minted successfully!');
         } catch (error) {
@@ -87,17 +87,25 @@ const AdminPage = () => {
                 tokenIds.push(TransacX.RIDE_CREDITS);
                 amounts.push(rideCredits);
             }
-    
+            let uT ;
             if (nftAmount > 0) {
                 // Add NFT token IDs to the array for distribution
-                for (let i = TransacX.MEMBERSHIP_PASS; i < TransacX.nextTokenID; i++) {
-                    tokenIds.push(i);
-                    amounts.push(1); // NFTs have an amount of 1
-                }
+                 uT  = await contract.methods.getUserTokens(accounts[0]).call({ from: accounts[0] });
             }
+                console.log("uT: ", uT);
+                for (let i = 0; i < userAddresses.length; i++) {
+                    let tn  = [];
+                    let am = [];
+                    tn.push(1);
+                    am.push(rideCredits); 
+                    tn.push(uT[1][i]);
+                    am.push(1); 
+                    console.log("here are the detals",)
+                    await contract.methods.safeBatchTransfer(userAddresses[i], tn, am, '0x').send({ from: accounts[0] });
+                }
     
-            // Perform the safe batch transfer
-            await contract.methods.safeBatchTransfer(userAddresses, tokenIds, amounts, []).send({ from: 'OWNER_ACCOUNT_ADDRESS' });
+    
+           
             alert('Tokens distributed successfully!');
         } catch (error) {
             console.error('Error distributing tokens:', error);
