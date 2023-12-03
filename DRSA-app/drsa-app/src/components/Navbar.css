@@ -115,3 +115,25 @@ span {
     height: 80px; /* adjust as necessary */
     width: auto;
 }
+
+/* Style for the disabled button */
+.button-disabled {
+    background-color: #cccccc; /* Grey color */
+    cursor: not-allowed;
+}
+
+/* Style to change the cursor and display a message on hover */
+.button-disabled:hover:after {
+    content: "You need a minimum of 50 RIDECREDITS to redeem";
+    position: absolute;
+    padding: 5px;
+    border: 1px solid #cccccc;
+    background-color: white;
+    color: black;
+    z-index: 1;
+    bottom: 100%;
+    left: 50%;
+    margin-left: -120px; /* Center the message */
+    width: 240px; /* Set the width of the message */
+    text-align: center;
+}
