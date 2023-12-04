@@ -53,8 +53,24 @@ function Navbar( { redeemToken }) {
             if (web3) {
                 const accounts = await web3.eth.getAccounts();
                 setAccount(accounts[0]);
-                if (accounts[0] && userNames[accounts[0]]) {
-                    setUserName(userNames[accounts[0]]);
+                
+                try {
+                    const response = await fetch('http://localhost:4000/api/user/get');
+                    const userData = await response.json();
+    
+                    // Find the user with the matching account address
+                    const user = userData.find(user => user.account_address === accounts[0]);
+    
+                    // Set user name from the database if available
+                    if (user && user.user_name) {
+                        setUserName(user.user_name);
+                    } else if (accounts[0] && userNames[accounts[0]]) {
+                        // Fallback to the existing logic if no name found in the database
+                        setUserName(userNames[accounts[0]]);
+                    }
+                } catch (error) {
+                    console.error('Error fetching user data:', error);
+                    // Handle error or set a default user name
                 }
             }
         };

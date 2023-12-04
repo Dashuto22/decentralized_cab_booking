@@ -20,6 +20,14 @@ function Register() {
   const { setRideKoins } = useRideKoin();
   const { setRidePass } = useRidePass();
 
+  const firstNames = ["Alex", "Charlie", "Taylor", "Jordan", "Morgan", "Jamie", "Casey", "Avery", "Riley", "Peyton"];
+  const lastNames = ["Smith", "Johnson", "Williams", "Brown", "Jones", "Garcia", "Miller", "Davis", "Rodriguez", "Martinez"];
+
+  const generateRandomUsername = () => {
+    const randomFirstName = firstNames[Math.floor(Math.random() * firstNames.length)];
+    const randomLastName = lastNames[Math.floor(Math.random() * lastNames.length)];
+    return `${randomFirstName} ${randomLastName}`;
+  };
 
   useEffect(() => {
     const loadWeb3 = async () => {
@@ -91,6 +99,7 @@ function Register() {
     console.log("here: ");
     handleRegistration(async (rydeContract, account) => {
       await rydeContract.methods.registerAsRider().send({ from: account });
+      await postUserData(account, 2); // 2 for rider
       navigate('/rider'); // Redirect to rider page or driver page based on role
     });
   };
@@ -98,8 +107,36 @@ function Register() {
   const handleDriverRegister = () => {
     handleRegistration(async (rydeContract, account) => {
       await rydeContract.methods.registerAsDriver().send({ from: account });
+      await postUserData(account, 1); // 2 for rider
       navigate('/driver'); // Redirect to rider page or driver page based on role
     });
+  };
+
+
+  const postUserData = async (account, userRole) => {
+    const userName = generateRandomUsername();
+    const numberOfRides = 0;
+  
+    try {
+      const response = await fetch('http://localhost:4000/api/user/post', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          accountAddress: account,
+          userName,
+          userRole,
+          numberOfRides
+        }),
+      });
+  
+      const data = await response.json();
+
+      console.log('User data posted:', data);
+    } catch (error) {
+      console.error('Error posting user data:', error);
+    }
   };
 
   const handleLogin = async () => {
@@ -125,8 +162,8 @@ function Register() {
         else if(role==1){
           navigate('/driver');
         }
-        setRideKoins(previousKoins => previousKoins + parseInt(balance));
-        setRidePass(previousPass => previousPass + parseInt(xrpBalance));
+        setRideKoins(previousKoins => Number(previousKoins) + parseInt(balance));
+        setRidePass(previousPass => Number(previousPass) + parseInt(xrpBalance));
 
 
 
