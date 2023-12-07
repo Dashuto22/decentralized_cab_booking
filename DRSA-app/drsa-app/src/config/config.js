@@ -1,8 +1,8 @@
 const config = {
-    rydeAssetContractAddress: "0x4Cd0234d8f6d44d514d63440598Ec42B1a68524B",
-    xrtPassContract: "0x9C9163a92CFc7F58851332984d340E4E95396Afd",
-    transacxContract: "0x725fE4f5bF1f4F6B6bb5b95faC4a8569588a2b31",
-    rideKoinContract:"0xA3E280a47Df7ee8aF30A64DCE59BEFA43F465E27"
+    rydeAssetContractAddress: "0x79Ae21eCB9B74b31bAd6D45b9062743bB333a6DE",
+    xrtPassContract: "0xb7F7f13b04F788A57B4aAd28DA568bA2a4882e7C",
+    transacxContract: "0x4E710fFa59417DBF1436076695215EAf397Cc057",
+    rideKoinContract:"0xa1e471656724e4Ad67d9885fFCBAb70453c8C25f"
     // Add other configuration details here
 
 };

@@ -1,13 +1,13 @@
 {
-  "0x5A4FdC9Dbf313C90137dFe14206810aDCF381d0D": "Tesla Model 1",
-  "0x447AEa4D309997b3879D95A498a9233946f0adfd": "Tesla Model 2",
-  "0x810625644C5460739a61CF8E265c163B2880E2E2": "Tesla Model 3",
-  "0x0Eacb3e3B86109a723a28834FdcE3fF1541a6431": "Tesla Model 4",
-  "0x104037C83BBfACeebcE00680A151f874dd4479Eb": "Tesla Model 5",
-  "0xAc9a9700c520b8Ab38cdb12a7d44d17A97D3dD20": "Tesla Model 6",
-  "0x1bD75E450ed4a75e10e411f943097be7C5140a85": "Tesla Model 7",
-  "0x3b9c4950af1AdeF4a2012555fBA7e497e5985a1d": "Tesla Model 8",
-  "0x72Ed48814dbaC815C0169bc388135beF06185537": "Tesla Model 9",
-  "0x41A87B862dc15C7893676c0963dCBb1043Fd22E3": "Tesla Model 10"
+  "0": "Tesla Model 1",
+  "1": "Tesla Model 2",
+  "2": "Tesla Model 3",
+  "3": "Tesla Model 4",
+  "4": "Tesla Model 5",
+  "5": "Tesla Model 6",
+  "6": "Tesla Model 7",
+  "7": "Tesla Model 8",
+  "8": "Tesla Model 9",
+  "9": "Tesla Model 10"
 }
 

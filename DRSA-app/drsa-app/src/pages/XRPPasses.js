@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import xrpPassDescriptions from '../components/xrpPasses.json'; // Adjust the path as necessary
 import './XRPPasses.css'; // CSS file for styling the cards
-import RydeAsset from 'contractsAbi/Rydeasset.json';
+import RydeAsset from 'contractsAbi/RydeAsset.json';
 import config from "../config/config";
 import Transacx from 'contractsAbi/TransacX.json';
 import Web3 from "web3";

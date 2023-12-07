@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import Web3 from 'web3';
-import RydeAsset from 'contractsAbi/Rydeasset.json';
+import RydeAsset from 'contractsAbi/RydeAsset.json';
 import '../App.css';
 import userNames from "../components/users.json"; // Make sure the path is correct
 import cars from "../components/cars.json"
@@ -178,6 +178,19 @@ const RiderScreen = () => {
     }
   };
 
+  const getRandomNumber = () => {
+    return Math.floor(Math.random() * 10); // 10 is exclusive, so it gives a number between 0 and 9
+  };
+
+  const addressToSingleDigit = (inputAddress) => {
+    if (inputAddress.startsWith('0x')) {
+      inputAddress = inputAddress.slice(2);
+    }
+    inputAddress = inputAddress.toLowerCase();
+    const asciiSum = Array.from(inputAddress).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+    return (asciiSum % 9) + 1;
+  };
+  
   const checkForAcceptedRides = async (contract, account) => {
 
     console.log("is search", isSearchingRef.current);
@@ -192,14 +205,14 @@ const RiderScreen = () => {
             ride.rider !== "0x0000000000000000000000000000000000000000"
         );
         const rideDetails = validRides.map((ride) => ({
-          name: userNames[ride.driver], // This assumes you have a mapping of driver addresses to names
-          model: models[ride.driver], // Hardcoded for now
+          name: userNames[addressToSingleDigit(ride.driver).toString()], // This assumes you have a mapping of driver addresses to names
+          model: models[addressToSingleDigit(ride.driver).toString()], // Hardcoded for now
           stars: 5, // Hardcoded for now
           distance: '2 mins away', // Hardcoded for now
           fare: ride.fare,
           xrpId: ride.xrpID,
           acceptRequestId: ride.acceptRequestId,
-          photos: cars[ride.driver]
+          photos: cars[addressToSingleDigit(ride.driver).toString()]
           // ... any other details you want to include
         }));
         setAcceptedRides(rideDetails);

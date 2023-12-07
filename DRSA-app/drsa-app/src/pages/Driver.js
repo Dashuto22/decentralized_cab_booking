@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import Web3 from 'web3';
-import RydeAsset from 'contractsAbi/Rydeasset.json';
+import RydeAsset from 'contractsAbi/RydeAsset.json';
 import XclusiveRP from 'contractsAbi/XclusiveRydePass.json';
 import Transacx from 'contractsAbi/TransacX.json';
 
@@ -55,6 +55,18 @@ const DriverScreen = () => {
         // ... other riders ...
     ];
 
+    const getRandomNumber = () => {
+        return Math.floor(Math.random() * 10); // 10 is exclusive, so it gives a number between 0 and 9
+    };
+    const addressToSingleDigit = (inputAddress) => {
+        if (inputAddress.startsWith('0x')) {
+          inputAddress = inputAddress.slice(2);
+        }
+        inputAddress = inputAddress.toLowerCase();
+        const asciiSum = Array.from(inputAddress).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        return (asciiSum % 9) + 1;
+      };
+
     const startDrive = async () => {
         setIsSearching(true);
 
@@ -77,7 +89,7 @@ const DriverScreen = () => {
                     dropLocation: request[2],
                     stars: 4, // hardcoded for now
                     distance: '2 mins', // hardcoded for now
-                    profilePic: photos[request[0]], // placeholder or fetch from your mapping
+                    profilePic: photos[addressToSingleDigit(request[0]).toString()], // placeholder or fetch from your mapping
                     requestId: request[3]
                 };
             });
@@ -169,8 +181,9 @@ const DriverScreen = () => {
 
 
     const transferXRPToRider = async (xrpTokenId, riderAddress) => {
-        const contract = new web3.eth.Contract(config.transacxContract, Transacx.abi);
+        const contract = new web3.eth.Contract(Transacx.abi, config.transacxContract);
         try {
+            console.log(`XRP token ${xrpTokenId} transferred to rider. ${riderAddress}`);
             await contract.methods.transferXclusiveRydePass(riderAddress, xrpTokenId).send({ from: account });
             console.log(`XRP token ${xrpTokenId} transferred to rider.`);
             // ... additional UI updates

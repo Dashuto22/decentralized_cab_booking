@@ -25,9 +25,6 @@ contract RideKoin is ERC20, Ownable {
         _;
     }
 
-    function balanceOf(address user) public view override onlyOwnerOrAccountHolder(user) returns (uint256) {
-        return super.balanceOf(user);
-    }
 
     function _balanceOf(address user) external view returns (uint256) {
         return super.balanceOf(user);

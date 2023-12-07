@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { initializeWeb3 } from '../utils/web3';
-import RydeAsset from 'contractsAbi/Rydeasset.json';
+import RydeAsset from 'contractsAbi/RydeAsset.json';
 import Transacx from 'contractsAbi/TransacX.json';
 import RydePass from 'contractsAbi/XclusiveRydePass.json'
 
@@ -95,7 +95,7 @@ function AssetManagement() {
             await contractInstance.methods.buyRideKoin(tokenAmount).send({ from: account, value: tokenAmountInWei });
 
             console.log('Transaction successful for buyRideKoin');
-            setRideKoins(previousKoins => previousKoins + parseInt(tokenAmount));
+            setRideKoins(previousKoins => Number(previousKoins) + parseInt(tokenAmount));
 
         } catch (error) {
             console.error('Error in buyRideKoin transaction:', error);

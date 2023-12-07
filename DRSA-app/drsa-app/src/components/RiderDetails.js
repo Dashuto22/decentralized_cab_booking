@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { FaStar } from 'react-icons/fa';
 import contractAbi from '../Rydeasset.json';
-import RydeAsset from 'contractsAbi/Rydeasset.json';
+import RydeAsset from 'contractsAbi/RydeAsset.json';
+import Transacx from 'contractsAbi/TransacX.json';
 import config from '../config/config'; // Adjust the path based on your file structure
 import XRPPasses from "../components/xrpPasses.json";
 import Web3 from "web3";
@@ -52,13 +53,15 @@ const RiderDetail = ({ rider }) => {
 
     useEffect(() => {
         const fetchXrpPasses = async () => {
-            const contract = new web3.eth.Contract(RydeAsset.abi, config.rydeAssetContractAddress);
-            const tokens = await contract.methods.getTokens(account).call({ from: account });
+
+            const contractAddress = config.transacxContract;
+            const contractInstance = new web3.eth.Contract(Transacx.abi, contractAddress);
+            const tokens = await contractInstance.methods.getTokens(account).call({ from: account });
 
             // Fetch descriptions and prices for each token
             const passesWithDetails = await Promise.all(tokens.map(async (token) => {
                 const description = XRPPasses[token];
-                const price = await contract.methods.xclusivePassPrices(token).call({ from: account });
+                const price = await contractInstance.methods.xclusivePassPrices(token).call({ from: account });
                 return {
                     id: token,
                     description,

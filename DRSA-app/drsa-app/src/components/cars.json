@@ -1,13 +1,13 @@
 {
-  "0x5A4FdC9Dbf313C90137dFe14206810aDCF381d0D": "/assets/car1.png",
-  "0x447AEa4D309997b3879D95A498a9233946f0adfd": "/assets/car2.png",
-  "0x810625644C5460739a61CF8E265c163B2880E2E2": "/assets/car3.png",
-  "0x0Eacb3e3B86109a723a28834FdcE3fF1541a6431": "/assets/car4.png",
-  "0x104037C83BBfACeebcE00680A151f874dd4479Eb": "/assets/car5.png",
-  "0xAc9a9700c520b8Ab38cdb12a7d44d17A97D3dD20": "/assets/car6.png",
-  "0x1bD75E450ed4a75e10e411f943097be7C5140a85": "/assets/car7.png",
-  "0x3b9c4950af1AdeF4a2012555fBA7e497e5985a1d": "/assets/car8.png",
-  "0x72Ed48814dbaC815C0169bc388135beF06185537": "/assets/car9.png",
-  "0x41A87B862dc15C7893676c0963dCBb1043Fd22E3": "/assets/car10.png"
+  "0": "/assets/car1.png",
+  "1": "/assets/car2.png",
+  "2": "/assets/car3.png",
+  "3": "/assets/car4.png",
+  "4": "/assets/car5.png",
+  "5": "/assets/car6.png",
+  "6": "/assets/car7.png",
+  "7": "/assets/car8.png",
+  "8": "/assets/car9.png",
+  "9": "/assets/car10.png"
 }
 

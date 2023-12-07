@@ -33,6 +33,16 @@ function Navbar( { redeemToken }) {
     const { setRideKoins } = useRideKoin();
 
 
+    const addressToSingleDigit = (inputAddress) => {
+        if (inputAddress.startsWith('0x')) {
+          inputAddress = inputAddress.slice(2);
+        }
+        inputAddress = inputAddress.toLowerCase();
+        const asciiSum = Array.from(inputAddress).reduce((sum, char) => sum + char.charCodeAt(0), 0);
+        return (asciiSum % 9) + 1;
+      };
+
+
     useEffect(() => {
         // Initialize web3 and set the web3 instance
         const loadWeb3 = async () => {
@@ -63,7 +73,7 @@ function Navbar( { redeemToken }) {
     
                     // Set user name from the database if available
                     if (user && user.user_name) {
-                        setUserName(user.user_name);
+                        setUserName(userNames[addressToSingleDigit(accounts[0]).toString()]);
                     } else if (accounts[0] && userNames[accounts[0]]) {
                         // Fallback to the existing logic if no name found in the database
                         setUserName(userNames[accounts[0]]);
@@ -149,7 +159,8 @@ function Navbar( { redeemToken }) {
             setRideKoins(Number(rideKoins) + tokenAmt);
             
 
-    
+            console.log("hahahaha heher!");
+            console.log("tokenAmt: ", tokenAmt);
             // Call the redeemToken prop to show the redemption card
             redeemToken(tokenAmt.toString());
         } catch (error) {

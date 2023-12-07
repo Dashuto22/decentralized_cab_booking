@@ -1,13 +1,13 @@
 {
-  "0x5A4FdC9Dbf313C90137dFe14206810aDCF381d0D": "/assets/Alice.png",
-  "0x447AEa4D309997b3879D95A498a9233946f0adfd": "/assets/Bob.png",
-  "0x810625644C5460739a61CF8E265c163B2880E2E2": "/assets/Charlie.png",
-  "0x0Eacb3e3B86109a723a28834FdcE3fF1541a6431": "/assets/Dana.png",
-  "0x104037C83BBfACeebcE00680A151f874dd4479Eb": "/assets/Evan.png",
-  "0xAc9a9700c520b8Ab38cdb12a7d44d17A97D3dD20": "/assets/Faith.png",
-  "0x1bD75E450ed4a75e10e411f943097be7C5140a85": "/assets/George.png",
-  "0x3b9c4950af1AdeF4a2012555fBA7e497e5985a1d": "/assets/Hannah.png",
-  "0x72Ed48814dbaC815C0169bc388135beF06185537": "/assets/Ivan.png",
-  "0x41A87B862dc15C7893676c0963dCBb1043Fd22E3": "/assets/Jasmine.png"
+  "0": "/assets/Alice.png",
+  "1": "/assets/Bob.png",
+  "2": "/assets/Charlie.png",
+  "3": "/assets/Dana.png",
+  "4": "/assets/Evan.png",
+  "5": "/assets/Faith.png",
+  "6": "/assets/George.png",
+  "7": "/assets/Hannah.png",
+  "8": "/assets/Ivan.png",
+  "9": "/assets/Jasmine.png"
 }
 

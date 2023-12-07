@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { FaAddressCard, FaCarAlt, FaLock } from 'react-icons/fa';
 import { useNavigate } from 'react-router-dom';
-import  RydeAsset  from 'contractsAbi/Rydeasset.json';
+import  RydeAsset  from 'contractsAbi/RydeAsset.json';
 import Transacx from 'contractsAbi/TransacX.json';
 import contractAbi from '../Rydeasset.json';
 import './Register.css'; // Assuming you have a CSS file for styling
@@ -95,20 +95,31 @@ function Register() {
     }
   };
 
-  const handleRiderRegister = () => {
-    console.log("here: ");
-    handleRegistration(async (rydeContract, account) => {
+  const handleRiderRegister = async () => {
+    console.log("Rider registration initiated");
+    await handleRegistration(async (rydeContract, account) => {
       await rydeContract.methods.registerAsRider().send({ from: account });
-      await postUserData(account, 2); // 2 for rider
-      navigate('/rider'); // Redirect to rider page or driver page based on role
+      try {
+        await postUserData(account, 2); // 2 for rider
+        navigate('/rider'); // Redirect to rider page
+      } catch (error) {
+        console.error('Error in rider registration postUserData:', error);
+        // Implement user-friendly error handling here
+      }
     });
   };
 
-  const handleDriverRegister = () => {
-    handleRegistration(async (rydeContract, account) => {
+  const handleDriverRegister = async () => {
+    console.log("Driver registration initiated");
+    await handleRegistration(async (rydeContract, account) => {
       await rydeContract.methods.registerAsDriver().send({ from: account });
-      await postUserData(account, 1); // 2 for rider
-      navigate('/driver'); // Redirect to rider page or driver page based on role
+      try {
+        await postUserData(account, 1); // 1 for driver
+        navigate('/driver'); // Redirect to driver page
+      } catch (error) {
+        console.error('Error in driver registration postUserData:', error);
+        // Implement user-friendly error handling here
+      }
     });
   };
 
@@ -162,8 +173,8 @@ function Register() {
         else if(role==1){
           navigate('/driver');
         }
-        setRideKoins(previousKoins => Number(previousKoins) + parseInt(balance));
-        setRidePass(previousPass => Number(previousPass) + parseInt(xrpBalance));
+        setRideKoins(parseInt(balance));
+        setRidePass(parseInt(xrpBalance));
 
 
 

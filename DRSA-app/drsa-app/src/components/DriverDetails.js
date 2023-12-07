@@ -1,6 +1,6 @@
 import {React, useEffect, useState} from 'react';
 import { FaStar } from 'react-icons/fa';
-import RydeAsset from 'contractsAbi/Rydeasset.json';
+import RydeAsset from 'contractsAbi/RydeAsset.json';
 import Web3 from "web3";
 import Transacx from 'contractsAbi/TransacX.json';
 import config from '../config/config'; // Adjust the path based on your file structure
@@ -22,6 +22,7 @@ const DriverDetail = ({ driver }) => {
     useEffect(() => {
         console.log("DriverDetail props updated", driver);
     }, [driver]);
+
 
 
 

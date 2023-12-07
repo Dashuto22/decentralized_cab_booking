@@ -39,6 +39,25 @@ const AdminPage = () => {
             const accounts = await web3.eth.getAccounts();
             console.log(accounts);
             setAccounts(accounts);
+
+            const ethereumAccounts = await web3.eth.getAccounts();
+            console.log(ethereumAccounts);
+
+            // Fetch user data from the backend
+            try {
+                const response = await fetch('http://localhost:4000/api/user/get');
+                const userData = await response.json();
+
+                // Combine Ethereum accounts with user data
+                // Set accounts state
+                const accountAddresses = userData.map(user => user.account_address);
+                setAccounts(accountAddresses);
+            } catch (error) {
+                console.error('Error fetching user data:', error);
+                // Fallback: set accounts state with only Ethereum accounts
+                setAccounts(ethereumAccounts.map(account => ({ address: account })));
+            }
+
           }
         };
     
