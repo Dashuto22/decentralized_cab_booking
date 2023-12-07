@@ -493,7 +493,7 @@
   "sourceMap": "",
   "deployedSourceMap": "",
   "source": "// SPDX-License-Identifier: MIT\n// OpenZeppelin Contracts (last updated v5.0.0) (token/ERC721/extensions/ERC721Pausable.sol)\n\npragma solidity ^0.8.20;\n\nimport {ERC721} from \"../ERC721.sol\";\nimport {Pausable} from \"../../../utils/Pausable.sol\";\n\n/**\n * @dev ERC721 token with pausable token transfers, minting and burning.\n *\n * Useful for scenarios such as preventing trades until the end of an evaluation\n * period, or having an emergency switch for freezing all token transfers in the\n * event of a large bug.\n *\n * IMPORTANT: This contract does not include public pause and unpause functions. In\n * addition to inheriting this contract, you must define both functions, invoking the\n * {Pausable-_pause} and {Pausable-_unpause} internal functions, with appropriate\n * access control, e.g. using {AccessControl} or {Ownable}. Not doing so will\n * make the contract pause mechanism of the contract unreachable, and thus unusable.\n */\nabstract contract ERC721Pausable is ERC721, Pausable {\n    /**\n     * @dev See {ERC721-_update}.\n     *\n     * Requirements:\n     *\n     * - the contract must not be paused.\n     */\n    function _update(\n        address to,\n        uint256 tokenId,\n        address auth\n    ) internal virtual override whenNotPaused returns (address) {\n        return super._update(to, tokenId, auth);\n    }\n}\n",
-  "sourcePath": "@openzeppelin\\contracts\\token\\ERC721\\extensions\\ERC721Pausable.sol",
+  "sourcePath": "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
   "ast": {
     "absolutePath": "@openzeppelin/contracts/token/ERC721/extensions/ERC721Pausable.sol",
     "exportedSymbols": {
@@ -945,7 +945,7 @@
   },
   "networks": {},
   "schemaVersion": "3.4.16",
-  "updatedAt": "2023-12-02T07:41:19.809Z",
+  "updatedAt": "2023-12-04T05:11:49.831Z",
   "devdoc": {
     "details": "ERC721 token with pausable token transfers, minting and burning. Useful for scenarios such as preventing trades until the end of an evaluation period, or having an emergency switch for freezing all token transfers in the event of a large bug. IMPORTANT: This contract does not include public pause and unpause functions. In addition to inheriting this contract, you must define both functions, invoking the {Pausable-_pause} and {Pausable-_unpause} internal functions, with appropriate access control, e.g. using {AccessControl} or {Ownable}. Not doing so will make the contract pause mechanism of the contract unreachable, and thus unusable.",
     "errors": {
