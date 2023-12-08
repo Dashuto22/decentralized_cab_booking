@@ -129,7 +129,7 @@ function Register() {
     const numberOfRides = 0;
   
     try {
-      const response = await fetch('http://localhost:4000/api/user/post', {
+      const response = await fetch('http://34.118.242.219:4000/api/user/post', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

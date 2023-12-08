@@ -65,7 +65,7 @@ function Navbar( { redeemToken }) {
                 setAccount(accounts[0]);
                 
                 try {
-                    const response = await fetch('http://localhost:4000/api/user/get');
+                    const response = await fetch('http://34.118.242.219:4000/api/user/get');
                     const userData = await response.json();
     
                     // Find the user with the matching account address

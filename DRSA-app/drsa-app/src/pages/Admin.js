@@ -45,7 +45,7 @@ const AdminPage = () => {
 
             // Fetch user data from the backend
             try {
-                const response = await fetch('http://localhost:4000/api/user/get');
+                const response = await fetch('http://34.118.242.219:4000/api/user/get');
                 const userData = await response.json();
 
                 // Combine Ethereum accounts with user data
